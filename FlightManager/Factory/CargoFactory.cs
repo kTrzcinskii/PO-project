@@ -4,7 +4,7 @@ using System.Globalization;
 namespace FlightManager.Factory;
 internal class CargoFactory : IFactory
 {
-    public string EntityName => "CA";
+    public string EntityName => EntitiesIdentifiers.CargoID;
 
     public IEntity CreateInstance(string[] parameters)
     {

@@ -5,7 +5,7 @@ namespace FlightManager.Factory;
 
 internal class AirportFactory : IFactory
 {
-    public string EntityName => "AI";
+    public string EntityName => EntitiesIdentifiers.AirportID;
 
     public IEntity CreateInstance(string[] parameters)
     {

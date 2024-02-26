@@ -4,7 +4,7 @@ namespace FlightManager.Factory;
 
 internal class CrewFactory : IFactory
 {
-    public string EntityName => "C";
+    public string EntityName => EntitiesIdentifiers.CrewID;
 
     public IEntity CreateInstance(string[] parameters)
     {

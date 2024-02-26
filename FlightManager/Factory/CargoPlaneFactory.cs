@@ -5,7 +5,7 @@ namespace FlightManager.Factory;
 
 internal class CargoPlaneFactory : IFactory
 {
-    public string EntityName => "CP";
+    public string EntityName => EntitiesIdentifiers.CargoPlaneID;
 
     public IEntity CreateInstance(string[] parameters)
     {

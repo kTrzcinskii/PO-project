@@ -4,7 +4,7 @@ namespace FlightManager.Factory;
 
 internal class PassengerPlaneFactory : IFactory
 {
-    public string EntityName => "PP";
+    public string EntityName => EntitiesIdentifiers.PassengerPlaneID;
 
     public IEntity CreateInstance(string[] parameters)
     {

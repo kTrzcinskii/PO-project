@@ -2,13 +2,13 @@
 
 namespace FlightManager.Entity;
 
-[JsonDerivedType(typeof(Airport), typeDiscriminator: nameof(Airport))]
-[JsonDerivedType(typeof(Cargo), typeDiscriminator: nameof(Cargo))]
-[JsonDerivedType(typeof(CargoPlane), typeDiscriminator: nameof(CargoPlane))]
-[JsonDerivedType(typeof(Crew), typeDiscriminator: nameof(Crew))]
-[JsonDerivedType(typeof(Flight), typeDiscriminator: nameof(Flight))]
-[JsonDerivedType(typeof(Passenger), typeDiscriminator: nameof(Passenger))]
-[JsonDerivedType(typeof(PassengerPlane), typeDiscriminator: nameof(PassengerPlane))]
+[JsonDerivedType(typeof(Airport), typeDiscriminator: EntitiesIdentifiers.AirportID)]
+[JsonDerivedType(typeof(Cargo), typeDiscriminator: EntitiesIdentifiers.CargoID)]
+[JsonDerivedType(typeof(CargoPlane), typeDiscriminator: EntitiesIdentifiers.CargoPlaneID)]
+[JsonDerivedType(typeof(Crew), typeDiscriminator: EntitiesIdentifiers.CrewID)]
+[JsonDerivedType(typeof(Flight), typeDiscriminator: EntitiesIdentifiers.FlightID)]
+[JsonDerivedType(typeof(Passenger), typeDiscriminator: EntitiesIdentifiers.PassengerID)]
+[JsonDerivedType(typeof(PassengerPlane), typeDiscriminator: EntitiesIdentifiers.PassengerPlaneID)]
 internal interface IEntity
 {
     public ulong ID { get; init; }

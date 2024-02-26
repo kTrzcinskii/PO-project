@@ -6,13 +6,12 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        string outputPath = "test.json";
-        string inputPath = "example_data.ftr";
+        var arguments = new ArgumentsParser(args);
         IDataParser parser = new FTRDataParser();
         IDataSerializer dataSerializer = new JSONDataSerializer();
 
         FlightManager flightManager = new FlightManager(parser, dataSerializer);
-        flightManager.LoadEntities(inputPath);
-        flightManager.SerializeEntities(outputPath);
+        flightManager.LoadEntities(arguments.InputPath);
+        flightManager.SerializeEntities(arguments.OutputPath);
     }
 }

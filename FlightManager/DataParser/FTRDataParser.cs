@@ -4,11 +4,10 @@ internal class FTRDataParser : IDataParser
 {
     private static readonly string divider = ",";
 
-    public IList<(string, string[])> ParseData(string dataPath)
+    public IList<(string, string[])> ParseData(string[] data)
     {
         var arguments = new List<(string, string[])>();
-        var fileContentLines = File.ReadAllLines(dataPath);
-        foreach (var line in fileContentLines)
+        foreach (var line in data)
         {
             var splittedLine = line.Split(divider);
             var enitityName = splittedLine[0];

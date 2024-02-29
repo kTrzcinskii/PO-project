@@ -19,10 +19,11 @@ internal class FlightManager
         Factories = CreateFactoriesContainer();
     }
 
-    public void LoadEntities(string dataPath)
+    public void LoadEntitiesFromFile(string dataPath)
     {
         Entities.Clear();
-        var parsedData = DataParser.ParseData(dataPath);
+        var fileContentLines = File.ReadAllLines(dataPath);
+        var parsedData = DataParser.ParseData(fileContentLines);
         foreach (var entityData in parsedData)
         {
             (var entityName, var parameters) = entityData;
@@ -31,9 +32,10 @@ internal class FlightManager
         }
     }
 
-    public void SerializeEntities(string outputPath)
+    public void SaveEntitiesToFile(string outputPath)
     {
-        DataSerializer.SerializeData([.. Entities], outputPath);
+        var jsonData = DataSerializer.SerializeData([.. Entities]);
+        File.WriteAllText(outputPath, jsonData);
     }
 
     public void ChangeDataParser(IDataParser newDataParser)

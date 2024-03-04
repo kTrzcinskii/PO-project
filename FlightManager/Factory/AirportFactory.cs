@@ -1,21 +1,27 @@
 ﻿using FlightManager.Entity;
-using System.Globalization;
+using FlightManager.EntityArgumentsParser;
 
 namespace FlightManager.Factory;
 
 internal class AirportFactory : IFactory
 {
     public string EntityName => EntitiesIdentifiers.AirportID;
+    private AirportArgumentsParser Parser { get; init; }
+
+    public AirportFactory()
+    {
+        Parser = new AirportArgumentsParser();
+    }
 
     public IEntity CreateInstance(string[] parameters)
     {
-        ulong ID = Convert.ToUInt64(parameters[0]);
-        string name = parameters[1];
-        string code = parameters[2];
-        float longitude = Convert.ToSingle(parameters[3], CultureInfo.InvariantCulture);
-        float latitude = Convert.ToSingle(parameters[4], CultureInfo.InvariantCulture);
-        float AMSL = Convert.ToSingle(parameters[5], CultureInfo.InvariantCulture);
-        string countryISO = parameters[6];
+        var (ID, name, code, longitude, latitude, AMSL, countryISO) = Parser.ParseArgumets(parameters);
+        return new Airport(ID, name, code, longitude, latitude, AMSL, countryISO);
+    }
+
+    public IEntity CreateInstance(byte[] parameters)
+    {
+        var (ID, name, code, longitude, latitude, AMSL, countryISO) = Parser.ParseArgumets(parameters);
         return new Airport(ID, name, code, longitude, latitude, AMSL, countryISO);
     }
 }

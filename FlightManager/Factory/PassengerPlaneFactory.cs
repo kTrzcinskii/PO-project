@@ -1,20 +1,26 @@
 ﻿using FlightManager.Entity;
+using FlightManager.EntityArgumentsParser;
 
 namespace FlightManager.Factory;
 
 internal class PassengerPlaneFactory : IFactory
 {
     public string EntityName => EntitiesIdentifiers.PassengerPlaneID;
+    public PassengerPlaneArgumentsParser Parser { get; init; }
+
+    public PassengerPlaneFactory()
+    {
+        Parser = new PassengerPlaneArgumentsParser();
+    }
 
     public IEntity CreateInstance(string[] parameters)
     {
-        ulong ID = Convert.ToUInt64(parameters[0]);
-        string serial = parameters[1];
-        string countryISO = parameters[2];
-        string model = parameters[3];
-        ushort firstClassSize = Convert.ToUInt16(parameters[4]);
-        ushort businessClassSize = Convert.ToUInt16(parameters[5]);
-        ushort economyClassSize = Convert.ToUInt16(parameters[6]);
+        var (ID, serial, countryISO, model, firstClassSize, businessClassSize, economyClassSize) = Parser.ParseArgumets(parameters);
         return new PassengerPlane(ID, serial, countryISO, model, firstClassSize, businessClassSize, economyClassSize);
+    }
+
+    public IEntity CreateInstance(byte[] parameters)
+    {
+        throw new NotImplementedException();
     }
 }

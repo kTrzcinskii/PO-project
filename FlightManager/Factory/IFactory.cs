@@ -6,4 +6,5 @@ internal interface IFactory
 {
     public string EntityName { get; }
     public IEntity CreateInstance(string[] parameters);
+    public IEntity CreateInstance(byte[] parameters);
 }

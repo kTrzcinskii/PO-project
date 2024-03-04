@@ -1,26 +1,26 @@
-﻿using FlightManager.DataParser;
-using FlightManager.Entity;
-using System.Globalization;
+﻿using FlightManager.Entity;
+using FlightManager.EntityArgumentsParser;
 
 namespace FlightManager.Factory;
 
 internal class FlightFactory : IFactory
 {
     public string EntityName => EntitiesIdentifiers.FlightID;
+    private FlightArgumentsParser Parser { get; init; }
+
+    public FlightFactory()
+    {
+        Parser = new FlightArgumentsParser();
+    }
 
     public IEntity CreateInstance(string[] parameters)
     {
-        ulong ID = Convert.ToUInt64(parameters[0]);
-        ulong originID = Convert.ToUInt64(parameters[1]);
-        ulong targetID = Convert.ToUInt64(parameters[2]);
-        string takeOffTime = parameters[3];
-        string landingTime = parameters[4];
-        float longitude = Convert.ToSingle(parameters[5], CultureInfo.InvariantCulture);
-        float latitude = Convert.ToSingle(parameters[6], CultureInfo.InvariantCulture);
-        float AMSL = Convert.ToSingle(parameters[7], CultureInfo.InvariantCulture);
-        ulong planeID = Convert.ToUInt64(parameters[8]);
-        ulong[] crewIDs = Array.ConvertAll(ParametersFormatter.ConvertToArray(parameters[9]), Convert.ToUInt64);
-        ulong[] loadIDs = Array.ConvertAll(ParametersFormatter.ConvertToArray(parameters[10]), Convert.ToUInt64);
+        var (ID, originID, targetID, takeOffTime, landingTime, longitude, latitude, AMSL, planeID, crewIDs, loadIDs) = Parser.ParseArgumets(parameters);
         return new Flight(ID, originID, targetID, takeOffTime, landingTime, longitude, latitude, AMSL, planeID, crewIDs, loadIDs);
+    }
+
+    public IEntity CreateInstance(byte[] parameters)
+    {
+        throw new NotImplementedException();
     }
 }

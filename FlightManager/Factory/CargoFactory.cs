@@ -1,17 +1,26 @@
 ﻿using FlightManager.Entity;
-using System.Globalization;
+using FlightManager.EntityArgumentsParser;
 
 namespace FlightManager.Factory;
 internal class CargoFactory : IFactory
 {
     public string EntityName => EntitiesIdentifiers.CargoID;
+    private CargoArgumentsParser Parser { get; init; }
+
+    public CargoFactory()
+    {
+        Parser = new CargoArgumentsParser();
+    }
 
     public IEntity CreateInstance(string[] parameters)
     {
-        ulong ID = Convert.ToUInt64(parameters[0]);
-        float weight = Convert.ToSingle(parameters[1], CultureInfo.InvariantCulture);
-        string code = parameters[2];
-        string description = parameters[3];
+        var (ID, weight, code, description) = Parser.ParseArgumets(parameters);
+        return new Cargo(ID, weight, code, description);
+    }
+
+    public IEntity CreateInstance(byte[] parameters)
+    {
+        var (ID, weight, code, description) = Parser.ParseArgumets(parameters);
         return new Cargo(ID, weight, code, description);
     }
 }

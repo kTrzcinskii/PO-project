@@ -17,6 +17,21 @@ internal class AirportArgumentsParser : IEntityArgumentsParser<(ulong, string, s
 
     public (ulong, string, string, float, float, float, string) ParseArgumets(byte[] data)
     {
-        throw new NotImplementedException();
+        const int codeLenght = 3;
+        const int countryISOLength = 3;
+
+        using MemoryStream memStream = new MemoryStream(data);
+        using BinaryReader reader = new BinaryReader(memStream);
+
+        ulong ID = reader.ReadUInt64();
+        ushort nameLenght = reader.ReadUInt16();
+        string name = BitConverter.ToString(reader.ReadBytes(nameLenght));
+        string code = BitConverter.ToString(reader.ReadBytes(codeLenght));
+        float longitude = reader.ReadSingle();
+        float latitude = reader.ReadSingle();
+        float AMSL = reader.ReadSingle();
+        string countryISO = BitConverter.ToString(reader.ReadBytes(countryISOLength));
+
+        return (ID, name, code, longitude, latitude, AMSL, countryISO);
     }
 }

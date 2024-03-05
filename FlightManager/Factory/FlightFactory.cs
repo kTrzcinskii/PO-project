@@ -21,6 +21,8 @@ internal class FlightFactory : IFactory
 
     public IEntity CreateInstance(byte[] parameters)
     {
-        throw new NotImplementedException();
+        var (ID, originID, targetID, takeOffTime, landingTime, longitude, latitude, AMSL, planeID, crewIDs, loadIDs) = Parser.ParseArgumets(parameters);
+        return new Flight(ID, originID, targetID, takeOffTime, landingTime, longitude, latitude, AMSL, planeID, crewIDs, loadIDs);
+
     }
 }

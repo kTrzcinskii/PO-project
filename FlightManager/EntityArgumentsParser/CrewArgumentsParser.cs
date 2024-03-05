@@ -15,6 +15,22 @@ internal class CrewArgumentsParser : IEntityArgumentsParser<(ulong, string, ulon
 
     public (ulong, string, ulong, string, string, ushort, string) ParseArgumets(byte[] data)
     {
-        throw new NotImplementedException();
+        const int phoneLength = 12;
+        const int roleLength = 1;
+
+        using MemoryStream memStream = new MemoryStream(data);
+        using BinaryReader reader = new BinaryReader(memStream);
+
+        ulong ID = reader.ReadUInt64();
+        ushort nameLenght = reader.ReadUInt16();
+        string name = BitConverter.ToString(reader.ReadBytes(nameLenght));
+        ushort age = reader.ReadUInt16();
+        string phone = BitConverter.ToString(reader.ReadBytes(phoneLength));
+        ushort emailLenght = reader.ReadUInt16();
+        string email = BitConverter.ToString(reader.ReadBytes(emailLenght));
+        ushort practice = reader.ReadUInt16();
+        string role = BitConverter.ToString(reader.ReadBytes(roleLength));
+
+        return (ID, name, age, phone, email, practice, role);
     }
 }

@@ -2,9 +2,9 @@
 using System.Globalization;
 
 namespace FlightManager.EntityArgumentsParser;
-internal class FlightArgumentsParser : IEntityArgumentsParser<(ulong, ulong, ulong, string, string, float, float, float, ulong, ulong[], ulong[])>
+internal class FlightArgumentsParser : IEntityArgumentsParser<(ulong, ulong, ulong, string, string, float?, float?, float?, ulong, ulong[], ulong[])>
 {
-    public (ulong, ulong, ulong, string, string, float, float, float, ulong, ulong[], ulong[]) ParseArgumets(string[] data)
+    public (ulong, ulong, ulong, string, string, float?, float?, float?, ulong, ulong[], ulong[]) ParseArgumets(string[] data)
     {
         ulong ID = Convert.ToUInt64(data[0]);
         ulong originID = Convert.ToUInt64(data[1]);
@@ -20,8 +20,29 @@ internal class FlightArgumentsParser : IEntityArgumentsParser<(ulong, ulong, ulo
         return (ID, originID, targetID, takeOffTime, landingTime, longitude, latitude, AMSL, planeID, crewIDs, loadIDs);
     }
 
-    public (ulong, ulong, ulong, string, string, float, float, float, ulong, ulong[], ulong[]) ParseArgumets(byte[] data)
+    public (ulong, ulong, ulong, string, string, float?, float?, float?, ulong, ulong[], ulong[]) ParseArgumets(byte[] data)
     {
-        throw new NotImplementedException();
+        using MemoryStream memStream = new MemoryStream(data);
+        using BinaryReader reader = new BinaryReader(memStream);
+
+        ulong ID = reader.ReadUInt64();
+        ulong originID = reader.ReadUInt64();
+        ulong targetID = reader.ReadUInt64();
+        string takeOffTime = DateTimeOffset.FromUnixTimeMilliseconds((long)reader.ReadUInt64()).ToString("HH:mm");
+        string landingTime = DateTimeOffset.FromUnixTimeMilliseconds((long)reader.ReadUInt64()).ToString("HH:mm");
+        ulong planeID = reader.ReadUInt64();
+        ushort crewCount = reader.ReadUInt16();
+        ulong[] crewIDs = new ulong[crewCount];
+        for (int i = 0; i < crewCount; i++)
+        {
+            crewIDs[i] = reader.ReadUInt64();
+        }
+        ushort loadCount = reader.ReadUInt16();
+        ulong[] loadIDs = new ulong[loadCount];
+        for (int i = 0; i < loadCount; i++)
+        {
+            loadIDs[i] = reader.ReadUInt64();
+        }
+        return (ID, originID, targetID, takeOffTime, landingTime, null, null, null, planeID, crewIDs, loadIDs);
     }
 }

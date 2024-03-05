@@ -15,6 +15,21 @@ internal class PassengerPlaneArgumentsParser : IEntityArgumentsParser<(ulong, st
 
     public (ulong, string, string, string, ushort, ushort, ushort) ParseArgumets(byte[] data)
     {
-        throw new NotImplementedException();
+        const int serialLength = 10;
+        const int countryISOLength = 3;
+
+        using MemoryStream memStream = new MemoryStream(data);
+        using BinaryReader reader = new BinaryReader(memStream);
+
+        ulong ID = reader.ReadUInt64();
+        string serial = BitConverter.ToString(reader.ReadBytes(serialLength));
+        string countryISO = BitConverter.ToString(reader.ReadBytes(countryISOLength));
+        ushort modelLength = reader.ReadUInt16();
+        string model = BitConverter.ToString(reader.ReadBytes(modelLength));
+        ushort firstClassSize = reader.ReadUInt16();
+        ushort businessClassSize = reader.ReadUInt16();
+        ushort economyClassSize = reader.ReadUInt16();
+        return (ID, serial, countryISO, model, firstClassSize, businessClassSize, economyClassSize);
     }
+}
 }

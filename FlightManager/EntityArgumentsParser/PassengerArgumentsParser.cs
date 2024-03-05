@@ -15,6 +15,21 @@ internal class PassengerArgumentsParser : IEntityArgumentsParser<(ulong, string,
 
     public (ulong, string, ulong, string, string, string, ulong) ParseArgumets(byte[] data)
     {
-        throw new NotImplementedException();
+        const int phoneLength = 12;
+        const int classLength = 1;
+
+        using MemoryStream memStream = new MemoryStream(data);
+        using BinaryReader reader = new BinaryReader(memStream);
+
+        ulong ID = reader.ReadUInt64();
+        ushort nameLength = reader.ReadUInt16();
+        string name = BitConverter.ToString(reader.ReadBytes(nameLength));
+        ushort age = reader.ReadUInt16();
+        string phone = BitConverter.ToString(reader.ReadBytes(phoneLength));
+        ushort emailLength = reader.ReadUInt16();
+        string email = BitConverter.ToString(reader.ReadBytes(emailLength));
+        string @class = BitConverter.ToString(reader.ReadBytes(classLength));
+        ulong miles = reader.ReadUInt64();
+        return (ID, name, age, phone, email, @class, miles);
     }
 }

@@ -15,6 +15,19 @@ internal class CargoPlaneArgumentsParser : IEntityArgumentsParser<(ulong, string
 
     public (ulong, string, string, string, float) ParseArgumets(byte[] data)
     {
-        throw new NotImplementedException();
+        const int serialLength = 10;
+        const int countryISOLength = 3;
+
+        using MemoryStream memStream = new MemoryStream(data);
+        using BinaryReader reader = new BinaryReader(memStream);
+
+        ulong ID = reader.ReadUInt64();
+        string serial = BitConverter.ToString(reader.ReadBytes(serialLength));
+        string countryISO = BitConverter.ToString(reader.ReadBytes(countryISOLength));
+        ushort modelLength = reader.ReadUInt16();
+        string model = BitConverter.ToString(reader.ReadBytes(modelLength));
+        float maxLoad = reader.ReadSingle();
+
+        return (ID, serial, countryISO, model, maxLoad);
     }
 }

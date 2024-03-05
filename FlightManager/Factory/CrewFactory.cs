@@ -21,6 +21,7 @@ internal class CrewFactory : IFactory
 
     public IEntity CreateInstance(byte[] parameters)
     {
-        throw new NotImplementedException();
+        var (ID, name, age, phone, email, practice, role) = Parser.ParseArgumets(parameters);
+        return new Crew(ID, name, age, phone, email, practice, role);
     }
 }

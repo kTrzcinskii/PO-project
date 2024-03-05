@@ -21,6 +21,7 @@ internal class PassengerPlaneFactory : IFactory
 
     public IEntity CreateInstance(byte[] parameters)
     {
-        throw new NotImplementedException();
+        var (ID, serial, countryISO, model, firstClassSize, businessClassSize, economyClassSize) = Parser.ParseArgumets(parameters);
+        return new PassengerPlane(ID, serial, countryISO, model, firstClassSize, businessClassSize, economyClassSize);
     }
 }

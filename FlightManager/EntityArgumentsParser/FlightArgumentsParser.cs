@@ -23,7 +23,7 @@ internal class FlightArgumentsParser : IEntityArgumentsParser<(ulong, ulong, ulo
     public (ulong, ulong, ulong, string, string, float?, float?, float?, ulong, ulong[], ulong[]) ParseArgumets(byte[] data)
     {
         using MemoryStream memStream = new MemoryStream(data);
-        using BinaryReader reader = new BinaryReader(memStream);
+        using BinaryReader reader = new BinaryReader(memStream, new System.Text.ASCIIEncoding());
 
         ulong ID = reader.ReadUInt64();
         ulong originID = reader.ReadUInt64();

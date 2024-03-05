@@ -19,7 +19,7 @@ internal class PassengerArgumentsParser : IEntityArgumentsParser<(ulong, string,
         const int classLength = 1;
 
         using MemoryStream memStream = new MemoryStream(data);
-        using BinaryReader reader = new BinaryReader(memStream);
+        using BinaryReader reader = new BinaryReader(memStream, new System.Text.ASCIIEncoding());
 
         ulong ID = reader.ReadUInt64();
         ushort nameLength = reader.ReadUInt16();

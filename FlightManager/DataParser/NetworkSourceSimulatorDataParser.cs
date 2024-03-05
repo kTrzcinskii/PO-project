@@ -8,9 +8,9 @@ internal class NetworkSourceSimulatorDataParser : IDataParser<byte[], byte[]>
         const int entityCodeLength = 3;
 
         using MemoryStream memStream = new MemoryStream(data);
-        using BinaryReader reader = new BinaryReader(memStream);
+        using BinaryReader reader = new BinaryReader(memStream, new System.Text.ASCIIEncoding());
 
-        string entityName = new string(reader.ReadChars(entityCodeLength));
+        string entityName = MessageCodeToEntityIdentifier(new string(reader.ReadChars(entityCodeLength)));
         uint messageLength = reader.ReadUInt32();
         byte[] parameters = new byte[messageLength];
         Array.Copy(data, memStream.Position, parameters, 0, messageLength);

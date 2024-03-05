@@ -21,7 +21,7 @@ internal class AirportArgumentsParser : IEntityArgumentsParser<(ulong, string, s
         const int countryISOLength = 3;
 
         using MemoryStream memStream = new MemoryStream(data);
-        using BinaryReader reader = new BinaryReader(memStream);
+        using BinaryReader reader = new BinaryReader(memStream, new System.Text.ASCIIEncoding());
 
         ulong ID = reader.ReadUInt64();
         ushort nameLenght = reader.ReadUInt16();

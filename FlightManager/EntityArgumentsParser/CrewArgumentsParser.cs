@@ -19,7 +19,7 @@ internal class CrewArgumentsParser : IEntityArgumentsParser<(ulong, string, ulon
         const int roleLength = 1;
 
         using MemoryStream memStream = new MemoryStream(data);
-        using BinaryReader reader = new BinaryReader(memStream);
+        using BinaryReader reader = new BinaryReader(memStream, new System.Text.ASCIIEncoding());
 
         ulong ID = reader.ReadUInt64();
         ushort nameLenght = reader.ReadUInt16();

@@ -19,7 +19,7 @@ internal class PassengerPlaneArgumentsParser : IEntityArgumentsParser<(ulong, st
         const int countryISOLength = 3;
 
         using MemoryStream memStream = new MemoryStream(data);
-        using BinaryReader reader = new BinaryReader(memStream);
+        using BinaryReader reader = new BinaryReader(memStream, new System.Text.ASCIIEncoding());
 
         ulong ID = reader.ReadUInt64();
         string serial = new string(reader.ReadChars(serialLength));

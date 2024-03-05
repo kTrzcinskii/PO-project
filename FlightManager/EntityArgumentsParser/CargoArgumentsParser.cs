@@ -17,7 +17,7 @@ internal class CargoArgumentsParser : IEntityArgumentsParser<(ulong, float, stri
         const int codeLenght = 6;
 
         using MemoryStream memStream = new MemoryStream(data);
-        using BinaryReader reader = new BinaryReader(memStream);
+        using BinaryReader reader = new BinaryReader(memStream, new System.Text.ASCIIEncoding());
 
         ulong ID = reader.ReadUInt64();
         float weight = reader.ReadSingle();

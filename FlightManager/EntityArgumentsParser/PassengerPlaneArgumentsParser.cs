@@ -32,4 +32,4 @@ internal class PassengerPlaneArgumentsParser : IEntityArgumentsParser<(ulong, st
         return (ID, serial, countryISO, model, firstClassSize, businessClassSize, economyClassSize);
     }
 }
-}
+

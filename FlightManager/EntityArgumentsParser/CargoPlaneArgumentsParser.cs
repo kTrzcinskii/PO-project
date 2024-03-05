@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text;
 
 namespace FlightManager.EntityArgumentsParser;
 internal class CargoPlaneArgumentsParser : IEntityArgumentsParser<(ulong, string, string, string, float)>
@@ -22,10 +23,10 @@ internal class CargoPlaneArgumentsParser : IEntityArgumentsParser<(ulong, string
         using BinaryReader reader = new BinaryReader(memStream);
 
         ulong ID = reader.ReadUInt64();
-        string serial = BitConverter.ToString(reader.ReadBytes(serialLength));
-        string countryISO = BitConverter.ToString(reader.ReadBytes(countryISOLength));
+        string serial = Encoding.Default.GetString(reader.ReadBytes(serialLength));
+        string countryISO = Encoding.Default.GetString(reader.ReadBytes(countryISOLength));
         ushort modelLength = reader.ReadUInt16();
-        string model = BitConverter.ToString(reader.ReadBytes(modelLength));
+        string model = Encoding.Default.GetString(reader.ReadBytes(modelLength));
         float maxLoad = reader.ReadSingle();
 
         return (ID, serial, countryISO, model, maxLoad);

@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text;
 
 namespace FlightManager.EntityArgumentsParser;
 internal class AirportArgumentsParser : IEntityArgumentsParser<(ulong, string, string, float, float, float, string)>
@@ -25,12 +26,12 @@ internal class AirportArgumentsParser : IEntityArgumentsParser<(ulong, string, s
 
         ulong ID = reader.ReadUInt64();
         ushort nameLenght = reader.ReadUInt16();
-        string name = BitConverter.ToString(reader.ReadBytes(nameLenght));
-        string code = BitConverter.ToString(reader.ReadBytes(codeLenght));
+        string name = Encoding.Default.GetString(reader.ReadBytes(nameLenght));
+        string code = Encoding.Default.GetString(reader.ReadBytes(codeLenght));
         float longitude = reader.ReadSingle();
         float latitude = reader.ReadSingle();
         float AMSL = reader.ReadSingle();
-        string countryISO = BitConverter.ToString(reader.ReadBytes(countryISOLength));
+        string countryISO = Encoding.Default.GetString(reader.ReadBytes(countryISOLength));
 
         return (ID, name, code, longitude, latitude, AMSL, countryISO);
     }

@@ -1,4 +1,6 @@
-﻿namespace FlightManager.EntityArgumentsParser;
+﻿using System.Text;
+
+namespace FlightManager.EntityArgumentsParser;
 internal class CrewArgumentsParser : IEntityArgumentsParser<(ulong, string, ulong, string, string, ushort, string)>
 {
     public (ulong, string, ulong, string, string, ushort, string) ParseArgumets(string[] data)
@@ -23,13 +25,13 @@ internal class CrewArgumentsParser : IEntityArgumentsParser<(ulong, string, ulon
 
         ulong ID = reader.ReadUInt64();
         ushort nameLenght = reader.ReadUInt16();
-        string name = BitConverter.ToString(reader.ReadBytes(nameLenght));
+        string name = Encoding.Default.GetString(reader.ReadBytes(nameLenght));
         ushort age = reader.ReadUInt16();
-        string phone = BitConverter.ToString(reader.ReadBytes(phoneLength));
+        string phone = Encoding.Default.GetString(reader.ReadBytes(phoneLength));
         ushort emailLenght = reader.ReadUInt16();
-        string email = BitConverter.ToString(reader.ReadBytes(emailLenght));
+        string email = Encoding.Default.GetString(reader.ReadBytes(emailLenght));
         ushort practice = reader.ReadUInt16();
-        string role = BitConverter.ToString(reader.ReadBytes(roleLength));
+        string role = Encoding.Default.GetString(reader.ReadBytes(roleLength));
 
         return (ID, name, age, phone, email, practice, role);
     }

@@ -1,4 +1,6 @@
-﻿namespace FlightManager.EntityArgumentsParser;
+﻿using System.Text;
+
+namespace FlightManager.EntityArgumentsParser;
 internal class PassengerPlaneArgumentsParser : IEntityArgumentsParser<(ulong, string, string, string, ushort, ushort, ushort)>
 {
     public (ulong, string, string, string, ushort, ushort, ushort) ParseArgumets(string[] data)
@@ -22,10 +24,10 @@ internal class PassengerPlaneArgumentsParser : IEntityArgumentsParser<(ulong, st
         using BinaryReader reader = new BinaryReader(memStream);
 
         ulong ID = reader.ReadUInt64();
-        string serial = BitConverter.ToString(reader.ReadBytes(serialLength));
-        string countryISO = BitConverter.ToString(reader.ReadBytes(countryISOLength));
+        string serial = Encoding.Default.GetString(reader.ReadBytes(serialLength));
+        string countryISO = Encoding.Default.GetString(reader.ReadBytes(countryISOLength));
         ushort modelLength = reader.ReadUInt16();
-        string model = BitConverter.ToString(reader.ReadBytes(modelLength));
+        string model = Encoding.Default.GetString(reader.ReadBytes(modelLength));
         ushort firstClassSize = reader.ReadUInt16();
         ushort businessClassSize = reader.ReadUInt16();
         ushort economyClassSize = reader.ReadUInt16();

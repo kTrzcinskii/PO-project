@@ -1,5 +1,4 @@
 ﻿using FlightManager.Entity;
-using System.Text;
 
 namespace FlightManager.DataParser;
 internal class NetworkSourceSimulatorDataParser : IDataParser<byte[], byte[]>
@@ -11,7 +10,7 @@ internal class NetworkSourceSimulatorDataParser : IDataParser<byte[], byte[]>
         using MemoryStream memStream = new MemoryStream(data);
         using BinaryReader reader = new BinaryReader(memStream);
 
-        string entityName = MessageCodeToEntityIdentifier(Encoding.Default.GetString(reader.ReadBytes(entityCodeLength)));
+        string entityName = new string(reader.ReadChars(entityCodeLength));
         uint messageLength = reader.ReadUInt32();
         byte[] parameters = new byte[messageLength];
         Array.Copy(data, memStream.Position, parameters, 0, messageLength);

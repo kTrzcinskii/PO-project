@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Text;
 
 namespace FlightManager.EntityArgumentsParser;
 internal class CargoArgumentsParser : IEntityArgumentsParser<(ulong, float, string, string)>
@@ -22,9 +21,9 @@ internal class CargoArgumentsParser : IEntityArgumentsParser<(ulong, float, stri
 
         ulong ID = reader.ReadUInt64();
         float weight = reader.ReadSingle();
-        string code = Encoding.Default.GetString(reader.ReadBytes(codeLenght));
+        string code = new string(reader.ReadChars(codeLenght));
         ushort descriptionLength = reader.ReadUInt16();
-        string description = Encoding.Default.GetString(reader.ReadBytes(descriptionLength));
+        string description = new string(reader.ReadChars(descriptionLength));
 
         return (ID, weight, code, description);
     }

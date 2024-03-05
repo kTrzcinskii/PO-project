@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace FlightManager.EntityArgumentsParser;
+﻿namespace FlightManager.EntityArgumentsParser;
 internal class PassengerArgumentsParser : IEntityArgumentsParser<(ulong, string, ulong, string, string, string, ulong)>
 {
     public (ulong, string, ulong, string, string, string, ulong) ParseArgumets(string[] data)
@@ -25,12 +23,12 @@ internal class PassengerArgumentsParser : IEntityArgumentsParser<(ulong, string,
 
         ulong ID = reader.ReadUInt64();
         ushort nameLength = reader.ReadUInt16();
-        string name = Encoding.Default.GetString(reader.ReadBytes(nameLength));
+        string name = new string(reader.ReadChars(nameLength));
         ushort age = reader.ReadUInt16();
-        string phone = Encoding.Default.GetString(reader.ReadBytes(phoneLength));
+        string phone = new string(reader.ReadChars(phoneLength));
         ushort emailLength = reader.ReadUInt16();
-        string email = Encoding.Default.GetString(reader.ReadBytes(emailLength));
-        string @class = Encoding.Default.GetString(reader.ReadBytes(classLength));
+        string email = new string(reader.ReadChars(emailLength));
+        string @class = new string(reader.ReadChars(classLength));
         ulong miles = reader.ReadUInt64();
         return (ID, name, age, phone, email, @class, miles);
     }

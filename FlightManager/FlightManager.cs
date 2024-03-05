@@ -6,46 +6,33 @@ using FlightManager.Factory;
 namespace FlightManager;
 internal class FlightManager
 {
-    private IDataParser DataParser { get; set; }
-    private IDataSerializer DataSerializer { get; set; }
     private List<IEntity> Entities { get; init; }
     private Dictionary<string, IFactory> Factories { get; init; }
 
-    public FlightManager(IDataParser dataParser, IDataSerializer dataSerializer)
+    public FlightManager()
     {
-        DataParser = dataParser;
-        DataSerializer = dataSerializer;
         Entities = new List<IEntity>();
         Factories = CreateFactoriesContainer();
     }
 
-    public void LoadEntitiesFromFile(string dataPath)
+    public void LoadEntitiesFromTextFile(string dataPath, IDataParser<string, string[]> dataParser)
     {
         Entities.Clear();
         var fileContentLines = File.ReadAllLines(dataPath);
-        var parsedData = DataParser.ParseData(fileContentLines);
-        foreach (var entityData in parsedData)
+
+        foreach (string line in fileContentLines)
         {
-            (var entityName, var parameters) = entityData;
+            var parsedData = dataParser.ParseData(line);
+            (var entityName, var parameters) = parsedData;
             IFactory factory = Factories[entityName];
             Entities.Add(factory.CreateInstance(parameters));
         }
     }
 
-    public void SaveEntitiesToFile(string outputPath)
+    public void SaveEntitiesToFile(string outputPath, IDataSerializer dataSerializer)
     {
-        var jsonData = DataSerializer.SerializeData([.. Entities]);
+        var jsonData = dataSerializer.SerializeData([.. Entities]);
         File.WriteAllText(outputPath, jsonData);
-    }
-
-    public void ChangeDataParser(IDataParser newDataParser)
-    {
-        DataParser = newDataParser;
-    }
-
-    public void ChangeDataSerializer(IDataSerializer newDataSerializer)
-    {
-        DataSerializer = newDataSerializer;
     }
 
     private static Dictionary<string, IFactory> CreateFactoriesContainer()

@@ -1,50 +1,72 @@
-﻿using FlightManager.DataParser;
+﻿using FlightManager.DataLoader;
 using FlightManager.DataSerializer;
 using FlightManager.Entity;
-using FlightManager.Factory;
 
 namespace FlightManager;
 internal class FlightManager
 {
     private List<IEntity> Entities { get; init; }
-    private Dictionary<string, IFactory> Factories { get; init; }
+    private IDataLoader DataLoader { get; set; }
+    private IDataSerializer DataSerializer { get; set; }
+    private readonly object entitiesLock = new object();
+    private const string EXIT_COMMAND = "exit";
+    private const string SNAPSHOT_COMMAND = "print";
 
-    public FlightManager()
+    public FlightManager(IDataLoader dataLoader, IDataSerializer dataSerializer)
     {
         Entities = new List<IEntity>();
-        Factories = CreateFactoriesContainer();
+        DataLoader = dataLoader;
+        DataSerializer = dataSerializer;
     }
 
-    public void LoadEntitiesFromTextFile(string dataPath, IDataParser<string, string[]> dataParser)
+    public void StartApp(string dataPath)
     {
-        Entities.Clear();
-        var fileContentLines = File.ReadAllLines(dataPath);
+        LoadEntities(dataPath);
+        HandleApplicationInput();
+    }
 
-        foreach (string line in fileContentLines)
+    private void HandleApplicationInput()
+    {
+        string command;
+        while (true)
         {
-            var parsedData = dataParser.ParseData(line);
-            (var entityName, var parameters) = parsedData;
-            IFactory factory = Factories[entityName];
-            Entities.Add(factory.CreateInstance(parameters));
+            Console.Write("# ");
+            command = Console.ReadLine() ?? "";
+            switch (command)
+            {
+                case EXIT_COMMAND:
+                    HandleExit();
+                    break;
+                case SNAPSHOT_COMMAND:
+                    HandleSnapshot();
+                    break;
+            }
         }
     }
 
-    public void SaveEntitiesToFile(string outputPath, IDataSerializer dataSerializer)
+    private void HandleExit()
     {
-        var jsonData = dataSerializer.SerializeData([.. Entities]);
-        File.WriteAllText(outputPath, jsonData);
+        Environment.Exit(1);
     }
 
-    private static Dictionary<string, IFactory> CreateFactoriesContainer()
+    private void HandleSnapshot()
     {
-        var airportFactory = new AirportFactory();
-        var cargoFactory = new CargoFactory();
-        var cargoPlaneFactory = new CargoPlaneFactory();
-        var crewFactory = new CrewFactory();
-        var flightFactory = new FlightFactory();
-        var passengerFactory = new PassengerFactory();
-        var passengerPlaneFactory = new PassengerPlaneFactory();
-        Dictionary<string, IFactory> factories = new Dictionary<string, IFactory>() { { airportFactory.EntityName, airportFactory }, { cargoFactory.EntityName, cargoFactory }, { cargoPlaneFactory.EntityName, cargoPlaneFactory }, { crewFactory.EntityName, crewFactory }, { flightFactory.EntityName, flightFactory }, { passengerFactory.EntityName, passengerFactory }, { passengerPlaneFactory.EntityName, passengerPlaneFactory } };
-        return factories;
+        string time = DateTime.Now.ToString("HH_mm_ss");
+        string filePath = $"snapshot_{time}.json";
+        lock (entitiesLock)
+        {
+            SaveEntities(filePath);
+        }
+    }
+
+    private void LoadEntities(string dataPath)
+    {
+        DataLoader.Load(dataPath, Entities, entitiesLock);
+    }
+
+    private void SaveEntities(string outputPath)
+    {
+        var jsonData = DataSerializer.SerializeData([.. Entities]);
+        File.WriteAllText(outputPath, jsonData);
     }
 }

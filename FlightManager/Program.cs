@@ -1,4 +1,4 @@
-﻿using FlightManager.DataParser;
+﻿using FlightManager.DataLoader;
 using FlightManager.DataSerializer;
 
 namespace FlightManager;
@@ -6,13 +6,9 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        var input = "example_data.ftr";
-        var output = "output.json";
-        IDataParser parser = new FTRDataParser();
-        IDataSerializer dataSerializer = new JSONDataSerializer();
+        var ftrDataPath = "example_data.ftr";
 
-        FlightManager flightManager = new FlightManager(parser, dataSerializer);
-        flightManager.LoadEntitiesFromFile(input);
-        flightManager.SaveEntitiesToFile(output);
+        FlightManager flightManager = new FlightManager(new NetworkSourceSimulatorDataLoader(), new JSONDataSerializer());
+        flightManager.StartApp(ftrDataPath);
     }
 }

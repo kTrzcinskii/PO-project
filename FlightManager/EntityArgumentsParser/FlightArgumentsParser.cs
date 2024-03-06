@@ -1,5 +1,4 @@
-﻿using FlightManager.DataParser;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace FlightManager.EntityArgumentsParser;
 internal class FlightArgumentsParser : IEntityArgumentsParser<(ulong, ulong, ulong, string, string, float?, float?, float?, ulong, ulong[], ulong[])>

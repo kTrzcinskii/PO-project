@@ -23,12 +23,12 @@ internal class PassengerArgumentsParser : IEntityArgumentsParser<(ulong, string,
 
         ulong ID = reader.ReadUInt64();
         ushort nameLength = reader.ReadUInt16();
-        string name = new string(reader.ReadChars(nameLength));
+        string name = ParametersFormatter.ReadStringFromBytes(reader, nameLength);
         ushort age = reader.ReadUInt16();
-        string phone = new string(reader.ReadChars(phoneLength));
+        string phone = ParametersFormatter.ReadStringFromBytes(reader, phoneLength);
         ushort emailLength = reader.ReadUInt16();
-        string email = new string(reader.ReadChars(emailLength));
-        string @class = new string(reader.ReadChars(classLength));
+        string email = ParametersFormatter.ReadStringFromBytes(reader, emailLength);
+        string @class = ParametersFormatter.ReadStringFromBytes(reader, classLength);
         ulong miles = reader.ReadUInt64();
         return (ID, name, age, phone, email, @class, miles);
     }

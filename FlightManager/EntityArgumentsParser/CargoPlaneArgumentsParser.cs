@@ -22,7 +22,7 @@ internal class CargoPlaneArgumentsParser : IEntityArgumentsParser<(ulong, string
         using BinaryReader reader = new BinaryReader(memStream, new System.Text.ASCIIEncoding());
 
         ulong ID = reader.ReadUInt64();
-        string serial = new string(reader.ReadChars(serialLength));
+        string serial = ParametersFormatter.ReadStringFromBytes(reader, serialLength);
         string countryISO = new string(reader.ReadChars(countryISOLength));
         ushort modelLength = reader.ReadUInt16();
         string model = new string(reader.ReadChars(modelLength));

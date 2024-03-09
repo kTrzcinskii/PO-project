@@ -23,13 +23,13 @@ internal class CrewArgumentsParser : IEntityArgumentsParser<(ulong, string, ulon
 
         ulong ID = reader.ReadUInt64();
         ushort nameLenght = reader.ReadUInt16();
-        string name = new string(reader.ReadChars(nameLenght));
+        string name = ParametersFormatter.ReadStringFromBytes(reader, nameLenght);
         ushort age = reader.ReadUInt16();
-        string phone = new string(reader.ReadChars(phoneLength));
+        string phone = ParametersFormatter.ReadStringFromBytes(reader, phoneLength);
         ushort emailLenght = reader.ReadUInt16();
-        string email = new string(reader.ReadChars(emailLenght));
+        string email = ParametersFormatter.ReadStringFromBytes(reader, emailLenght);
         ushort practice = reader.ReadUInt16();
-        string role = new string(reader.ReadChars(roleLength));
+        string role = ParametersFormatter.ReadStringFromBytes(reader, roleLength);
 
         return (ID, name, age, phone, email, practice, role);
     }

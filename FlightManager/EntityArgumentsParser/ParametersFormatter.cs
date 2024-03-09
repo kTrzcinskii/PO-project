@@ -7,4 +7,12 @@ internal static class ParametersFormatter
         // Array is declared as "[value1;value2;value3,...]"
         return argument[1..^1].Split(splitOn);
     }
+
+    public static string ReadStringFromBytes(BinaryReader reader, int length, bool removeNulls = true)
+    {
+        var s = new string(reader.ReadChars(length));
+        if (removeNulls)
+            return s.Replace("\0", string.Empty);
+        return s;
+    }
 }

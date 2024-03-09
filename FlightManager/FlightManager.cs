@@ -46,7 +46,7 @@ internal class FlightManager
 
     private void HandleExit()
     {
-        Environment.Exit(1);
+        Environment.Exit(0);
     }
 
     private void HandleSnapshot()

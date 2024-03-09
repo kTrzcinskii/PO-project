@@ -21,9 +21,9 @@ internal class CargoArgumentsParser : IEntityArgumentsParser<(ulong, float, stri
 
         ulong ID = reader.ReadUInt64();
         float weight = reader.ReadSingle();
-        string code = new string(reader.ReadChars(codeLenght));
+        string code = ParametersFormatter.ReadStringFromBytes(reader, codeLenght);
         ushort descriptionLength = reader.ReadUInt16();
-        string description = new string(reader.ReadChars(descriptionLength));
+        string description = ParametersFormatter.ReadStringFromBytes(reader, descriptionLength);
 
         return (ID, weight, code, description);
     }

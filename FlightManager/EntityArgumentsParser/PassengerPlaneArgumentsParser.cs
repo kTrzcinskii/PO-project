@@ -22,10 +22,10 @@ internal class PassengerPlaneArgumentsParser : IEntityArgumentsParser<(ulong, st
         using BinaryReader reader = new BinaryReader(memStream, new System.Text.ASCIIEncoding());
 
         ulong ID = reader.ReadUInt64();
-        string serial = new string(reader.ReadChars(serialLength));
-        string countryISO = new string(reader.ReadChars(countryISOLength));
+        string serial = ParametersFormatter.ReadStringFromBytes(reader, serialLength);
+        string countryISO = ParametersFormatter.ReadStringFromBytes(reader, countryISOLength);
         ushort modelLength = reader.ReadUInt16();
-        string model = new string(reader.ReadChars(modelLength));
+        string model = ParametersFormatter.ReadStringFromBytes(reader, modelLength);
         ushort firstClassSize = reader.ReadUInt16();
         ushort businessClassSize = reader.ReadUInt16();
         ushort economyClassSize = reader.ReadUInt16();

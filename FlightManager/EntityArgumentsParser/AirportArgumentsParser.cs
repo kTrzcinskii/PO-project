@@ -25,12 +25,12 @@ internal class AirportArgumentsParser : IEntityArgumentsParser<(ulong, string, s
 
         ulong ID = reader.ReadUInt64();
         ushort nameLenght = reader.ReadUInt16();
-        string name = new string(reader.ReadChars(nameLenght));
-        string code = new string(reader.ReadChars(codeLenght));
+        string name = ParametersFormatter.ReadStringFromBytes(reader, nameLenght);
+        string code = ParametersFormatter.ReadStringFromBytes(reader, codeLenght);
         float longitude = reader.ReadSingle();
         float latitude = reader.ReadSingle();
         float AMSL = reader.ReadSingle();
-        string countryISO = new string(reader.ReadChars(countryISOLength));
+        string countryISO = ParametersFormatter.ReadStringFromBytes(reader, countryISOLength);
 
         return (ID, name, code, longitude, latitude, AMSL, countryISO);
     }

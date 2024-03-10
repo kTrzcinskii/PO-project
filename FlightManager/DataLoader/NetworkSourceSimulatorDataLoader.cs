@@ -1,4 +1,5 @@
 ﻿using FlightManager.Entity;
+using FlightManager.EntityArgumentsParser;
 using FlightManager.Factory;
 using NSS = NetworkSourceSimulator;
 
@@ -10,7 +11,6 @@ internal class NetworkSourceSimulatorDataLoader : IDataLoader
     private static readonly int entityCodeLength = 3;
 
     private Dictionary<string, IFactory>? factories;
-    private NSS.NetworkSourceSimulator? server;
     private object? entLock;
     private IList<IEntity>? ents;
 
@@ -19,18 +19,19 @@ internal class NetworkSourceSimulatorDataLoader : IDataLoader
         factories = IFactory.CreateFactoriesContainer();
         entLock = entitiesLock;
         ents = entities;
-        server = new NSS.NetworkSourceSimulator(dataPath, minOffsetInMs, maxOffsetInMs);
+        var server = new NSS.NetworkSourceSimulator(dataPath, minOffsetInMs, maxOffsetInMs);
         server.OnNewDataReady += NewDataReadyHandler;
         Task.Run(server.Run);
     }
 
     private void NewDataReadyHandler(object sender, NSS.NewDataReadyArgs args)
     {
+        var server = (NSS.NetworkSourceSimulator)sender;
         var data = server!.GetMessageAt(args.MessageIndex).MessageBytes;
         using MemoryStream memStream = new MemoryStream(data);
         using BinaryReader reader = new BinaryReader(memStream, new System.Text.ASCIIEncoding());
 
-        string entityName = MessageCodeToEntityIdentifier(new string(reader.ReadChars(entityCodeLength)));
+        string entityName = MessageCodeToEntityIdentifier(ParametersFormatter.ReadStringFromBytes(reader, entityCodeLength));
         uint messageLength = reader.ReadUInt32();
         byte[] parameters = new byte[messageLength];
         Array.Copy(data, memStream.Position, parameters, 0, messageLength);

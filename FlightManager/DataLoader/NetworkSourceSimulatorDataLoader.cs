@@ -13,20 +13,20 @@ internal class NetworkSourceSimulatorDataLoader : IDataLoader
     private Dictionary<string, IFactory>? factories;
     private object? entLock;
     private IList<IEntity>? ents;
+    private NSS.NetworkSourceSimulator? server;
 
     public void Load(string dataPath, IList<IEntity> entities, object? entitiesLock = null)
     {
         factories = IFactory.CreateFactoriesContainer();
         entLock = entitiesLock;
         ents = entities;
-        var server = new NSS.NetworkSourceSimulator(dataPath, minOffsetInMs, maxOffsetInMs);
+        server = new NSS.NetworkSourceSimulator(dataPath, minOffsetInMs, maxOffsetInMs);
         server.OnNewDataReady += NewDataReadyHandler;
         Task.Run(server.Run);
     }
 
-    private void NewDataReadyHandler(object sender, NSS.NewDataReadyArgs args)
+    private void NewDataReadyHandler(object _, NSS.NewDataReadyArgs args)
     {
-        var server = (NSS.NetworkSourceSimulator)sender;
         var data = server!.GetMessageAt(args.MessageIndex).MessageBytes;
         using MemoryStream memStream = new MemoryStream(data);
         using BinaryReader reader = new BinaryReader(memStream, new System.Text.ASCIIEncoding());

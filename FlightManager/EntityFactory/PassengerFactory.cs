@@ -1,11 +1,10 @@
 ﻿using FlightManager.Entity;
 using FlightManager.EntityArgumentsParser;
 
-namespace FlightManager.Factory;
+namespace FlightManager.EntityFactory;
 
-internal class PassengerFactory : IFactory
+internal class PassengerFactory : Factory
 {
-    public string EntityName => EntitiesIdentifiers.PassengerID;
     private PassengerArgumentsParser Parser { get; init; }
 
     public PassengerFactory()
@@ -13,13 +12,13 @@ internal class PassengerFactory : IFactory
         Parser = new PassengerArgumentsParser();
     }
 
-    public IEntity CreateInstance(string[] parameters)
+    public override Passenger CreateInstance(string[] parameters)
     {
         var (ID, name, age, phone, email, @class, miles) = Parser.ParseArgumets(parameters);
         return new Passenger(ID, name, age, phone, email, @class, miles);
     }
 
-    public IEntity CreateInstance(byte[] parameters)
+    public override Passenger CreateInstance(byte[] parameters)
     {
         var (ID, name, age, phone, email, @class, miles) = Parser.ParseArgumets(parameters);
         return new Passenger(ID, name, age, phone, email, @class, miles);

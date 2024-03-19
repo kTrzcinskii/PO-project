@@ -8,7 +8,7 @@ internal class Program
     static void Main(string[] args)
     {
         var arguments = ArgumentsParser.Parse(args);
-        FlightManager flightManager = new FlightManager(new NetworkSourceSimulatorDataLoader(), new JSONDataSerializer());
+        FlightManager flightManager = new FlightManager(new FTRFileDataLoader(), new JSONDataSerializer());
         flightManager.StartApp(arguments.inputPath);
     }
 }

@@ -1,10 +1,9 @@
 ﻿using FlightManager.Entity;
 using FlightManager.EntityArgumentsParser;
 
-namespace FlightManager.Factory;
-internal class CargoFactory : IFactory
+namespace FlightManager.EntityFactory;
+internal class CargoFactory : Factory
 {
-    public string EntityName => EntitiesIdentifiers.CargoID;
     private CargoArgumentsParser Parser { get; init; }
 
     public CargoFactory()
@@ -12,13 +11,13 @@ internal class CargoFactory : IFactory
         Parser = new CargoArgumentsParser();
     }
 
-    public IEntity CreateInstance(string[] parameters)
+    public override Cargo CreateInstance(string[] parameters)
     {
         var (ID, weight, code, description) = Parser.ParseArgumets(parameters);
         return new Cargo(ID, weight, code, description);
     }
 
-    public IEntity CreateInstance(byte[] parameters)
+    public override Cargo CreateInstance(byte[] parameters)
     {
         var (ID, weight, code, description) = Parser.ParseArgumets(parameters);
         return new Cargo(ID, weight, code, description);

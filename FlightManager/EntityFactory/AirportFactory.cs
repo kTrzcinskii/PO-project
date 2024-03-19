@@ -1,11 +1,10 @@
 ﻿using FlightManager.Entity;
 using FlightManager.EntityArgumentsParser;
 
-namespace FlightManager.Factory;
+namespace FlightManager.EntityFactory;
 
-internal class AirportFactory : IFactory
+internal class AirportFactory : Factory
 {
-    public string EntityName => EntitiesIdentifiers.AirportID;
     private AirportArgumentsParser Parser { get; init; }
 
     public AirportFactory()
@@ -13,13 +12,13 @@ internal class AirportFactory : IFactory
         Parser = new AirportArgumentsParser();
     }
 
-    public IEntity CreateInstance(string[] parameters)
+    public override Airport CreateInstance(string[] parameters)
     {
         var (ID, name, code, longitude, latitude, AMSL, countryISO) = Parser.ParseArgumets(parameters);
         return new Airport(ID, name, code, longitude, latitude, AMSL, countryISO);
     }
 
-    public IEntity CreateInstance(byte[] parameters)
+    public override Airport CreateInstance(byte[] parameters)
     {
         var (ID, name, code, longitude, latitude, AMSL, countryISO) = Parser.ParseArgumets(parameters);
         return new Airport(ID, name, code, longitude, latitude, AMSL, countryISO);

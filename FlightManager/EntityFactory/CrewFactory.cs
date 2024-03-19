@@ -1,11 +1,10 @@
 ﻿using FlightManager.Entity;
 using FlightManager.EntityArgumentsParser;
 
-namespace FlightManager.Factory;
+namespace FlightManager.EntityFactory;
 
-internal class CrewFactory : IFactory
+internal class CrewFactory : Factory
 {
-    public string EntityName => EntitiesIdentifiers.CrewID;
     private CrewArgumentsParser Parser { get; init; }
 
     public CrewFactory()
@@ -13,13 +12,13 @@ internal class CrewFactory : IFactory
         Parser = new CrewArgumentsParser();
     }
 
-    public IEntity CreateInstance(string[] parameters)
+    public override Crew CreateInstance(string[] parameters)
     {
         var (ID, name, age, phone, email, practice, role) = Parser.ParseArgumets(parameters);
         return new Crew(ID, name, age, phone, email, practice, role);
     }
 
-    public IEntity CreateInstance(byte[] parameters)
+    public override Crew CreateInstance(byte[] parameters)
     {
         var (ID, name, age, phone, email, practice, role) = Parser.ParseArgumets(parameters);
         return new Crew(ID, name, age, phone, email, practice, role);

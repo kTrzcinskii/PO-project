@@ -1,6 +1,6 @@
 ﻿using FlightManager.Entity;
 using FlightManager.EntityArgumentsParser;
-using FlightManager.Factory;
+using FlightManager.EntityFactory;
 using NSS = NetworkSourceSimulator;
 
 namespace FlightManager.DataLoader;
@@ -10,14 +10,18 @@ internal class NetworkSourceSimulatorDataLoader : IDataLoader
     private static readonly int maxOffsetInMs = 50;
     private static readonly int entityCodeLength = 3;
 
-    private Dictionary<string, IFactory>? factories;
+    private readonly Dictionary<string, Factory> factories;
     private object? entLock;
     private IList<IEntity>? ents;
     private NSS.NetworkSourceSimulator? server;
 
+    public NetworkSourceSimulatorDataLoader()
+    {
+        factories = CreateFactoriesContainer();
+    }
+
     public void Load(string dataPath, IList<IEntity> entities, object? entitiesLock = null)
     {
-        factories = IFactory.CreateFactoriesContainer();
         entLock = entitiesLock;
         ents = entities;
         server = new NSS.NetworkSourceSimulator(dataPath, minOffsetInMs, maxOffsetInMs);
@@ -31,12 +35,12 @@ internal class NetworkSourceSimulatorDataLoader : IDataLoader
         using MemoryStream memStream = new MemoryStream(data);
         using BinaryReader reader = new BinaryReader(memStream, new System.Text.ASCIIEncoding());
 
-        string entityName = MessageCodeToEntityIdentifier(ParametersFormatter.ReadStringFromBytes(reader, entityCodeLength));
+        string entityName = ParametersFormatter.ReadStringFromBytes(reader, entityCodeLength);
         uint messageLength = reader.ReadUInt32();
         byte[] parameters = new byte[messageLength];
         Array.Copy(data, memStream.Position, parameters, 0, messageLength);
 
-        IFactory factory = factories![entityName];
+        Factory factory = factories[entityName];
         IEntity newEntity = factory.CreateInstance(parameters);
         lock (entLock!)
         {
@@ -44,15 +48,10 @@ internal class NetworkSourceSimulatorDataLoader : IDataLoader
         }
     }
 
-    private static string MessageCodeToEntityIdentifier(string code) => code switch
+    private static Dictionary<string, Factory> CreateFactoriesContainer()
     {
-        "NCR" => EntitiesIdentifiers.CrewID,
-        "NPA" => EntitiesIdentifiers.PassengerID,
-        "NCA" => EntitiesIdentifiers.CargoID,
-        "NCP" => EntitiesIdentifiers.CargoPlaneID,
-        "NPP" => EntitiesIdentifiers.PassengerPlaneID,
-        "NAI" => EntitiesIdentifiers.AirportID,
-        "NFL" => EntitiesIdentifiers.FlightID,
-        _ => throw new ArgumentException("Invalid code")
-    };
+        var factories = new Dictionary<string, Factory> { { EntitiesIdentifiers.NewAirportID, new AirportFactory() }, { EntitiesIdentifiers.NewCargoID, new CargoFactory() }, { EntitiesIdentifiers.NewCargoPlaneID, new CargoPlaneFactory() },
+        { EntitiesIdentifiers.NewCrewID, new CrewFactory() }, { EntitiesIdentifiers.NewFlightID, new FlightFactory() }, { EntitiesIdentifiers.NewPassengerID, new PassengerFactory() }, { EntitiesIdentifiers.NewPassengerPlaneID, new PassengerPlaneFactory() }    };
+        return factories;
+    }
 }

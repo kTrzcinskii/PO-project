@@ -2,7 +2,7 @@
 using Mapsui.Projections;
 using System.Numerics;
 
-namespace FlightManager.Adapter;
+namespace FlightManager.GUI;
 internal class FlightGUIAdapter : FlightGUI
 {
     private const int DAY_IN_S = 24 * 60 * 60;

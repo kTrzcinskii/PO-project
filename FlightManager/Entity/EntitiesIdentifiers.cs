@@ -16,4 +16,6 @@ internal static class EntitiesIdentifiers
     public const string NewFlightID = "NFL";
     public const string NewPassengerID = "NPA";
     public const string NewPassengerPlaneID = "NPP";
+
+    public static readonly Dictionary<string, string> NewEntityIdentifier = new Dictionary<string, string>() { { NewAirportID, AirportID }, { NewCargoID, CargoID }, { NewCargoPlaneID, CargoPlaneID }, { NewCrewID, CrewID }, { NewFlightID, FlightID }, { NewPassengerID, PassengerID }, { NewPassengerPlaneID, PassengerPlaneID } };
 }

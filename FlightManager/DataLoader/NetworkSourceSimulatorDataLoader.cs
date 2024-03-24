@@ -17,7 +17,7 @@ internal class NetworkSourceSimulatorDataLoader : IDataLoader
 
     public NetworkSourceSimulatorDataLoader()
     {
-        factories = CreateFactoriesContainer();
+        factories = Factory.CreateFactoriesContainer();
     }
 
     public void Load(string dataPath, IList<IEntity> entities, object? entitiesLock = null)
@@ -35,7 +35,7 @@ internal class NetworkSourceSimulatorDataLoader : IDataLoader
         using MemoryStream memStream = new MemoryStream(data);
         using BinaryReader reader = new BinaryReader(memStream, new System.Text.ASCIIEncoding());
 
-        string entityName = ParametersFormatter.ReadStringFromBytes(reader, entityCodeLength);
+        string entityName = EntitiesIdentifiers.NewEntityIdentifier[ParametersFormatter.ReadStringFromBytes(reader, entityCodeLength)];
         uint messageLength = reader.ReadUInt32();
         byte[] parameters = new byte[messageLength];
         Array.Copy(data, memStream.Position, parameters, 0, messageLength);
@@ -46,12 +46,5 @@ internal class NetworkSourceSimulatorDataLoader : IDataLoader
         {
             ents!.Add(newEntity);
         }
-    }
-
-    private static Dictionary<string, Factory> CreateFactoriesContainer()
-    {
-        var factories = new Dictionary<string, Factory> { { EntitiesIdentifiers.NewAirportID, new AirportFactory() }, { EntitiesIdentifiers.NewCargoID, new CargoFactory() }, { EntitiesIdentifiers.NewCargoPlaneID, new CargoPlaneFactory() },
-        { EntitiesIdentifiers.NewCrewID, new CrewFactory() }, { EntitiesIdentifiers.NewFlightID, new FlightFactory() }, { EntitiesIdentifiers.NewPassengerID, new PassengerFactory() }, { EntitiesIdentifiers.NewPassengerPlaneID, new PassengerPlaneFactory() }    };
-        return factories;
     }
 }

@@ -9,4 +9,8 @@ internal class CargoPlane : Plane
         MaxLoad = maxLoad;
     }
 
+    public override void AcceptVisitor(IEntityVisitor visitor)
+    {
+        visitor.VisitCargoPlane(this);
+    }
 }

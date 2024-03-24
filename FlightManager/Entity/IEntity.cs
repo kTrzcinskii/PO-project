@@ -12,4 +12,5 @@ namespace FlightManager.Entity;
 internal interface IEntity
 {
     public ulong ID { get; init; }
+    public void AcceptVisitor(IEntityVisitor visitor);
 }

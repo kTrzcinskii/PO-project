@@ -15,4 +15,6 @@ internal abstract class Person : IEntity
         Phone = phone;
         Email = email;
     }
+
+    public abstract void AcceptVisitor(IEntityVisitor visitor);
 }

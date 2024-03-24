@@ -15,4 +15,8 @@ internal class Cargo : IEntity, ILoad
         Description = description;
     }
 
+    public void AcceptVisitor(IEntityVisitor visitor)
+    {
+        visitor.VisitCargo(this);
+    }
 }

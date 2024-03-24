@@ -13,4 +13,6 @@ internal abstract class Plane : IEntity
         CountryISO = countryISO;
         Model = model;
     }
+
+    public abstract void AcceptVisitor(IEntityVisitor visitor);
 }

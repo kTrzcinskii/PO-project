@@ -11,4 +11,8 @@ internal class Crew : Person
         Role = role;
     }
 
+    public override void AcceptVisitor(IEntityVisitor visitor)
+    {
+        visitor.VisitCrew(this);
+    }
 }

@@ -13,4 +13,8 @@ internal class PassengerPlane : Plane
         EconomyClassSize = economyClassSize;
     }
 
+    public override void AcceptVisitor(IEntityVisitor visitor)
+    {
+        visitor.VisitPassengerPlane(this);
+    }
 }

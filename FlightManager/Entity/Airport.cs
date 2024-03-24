@@ -21,4 +21,8 @@ internal class Airport : IEntity
         CountryISO = countryISO;
     }
 
+    public void AcceptVisitor(IEntityVisitor visitor)
+    {
+        visitor.VisitAirport(this);
+    }
 }

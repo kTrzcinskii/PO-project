@@ -29,4 +29,8 @@ internal class Flight : IEntity
         LoadIDs = loadIDs;
     }
 
+    public void AcceptVisitor(IEntityVisitor visitor)
+    {
+        visitor.VisitFlight(this);
+    }
 }

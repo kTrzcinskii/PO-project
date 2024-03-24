@@ -11,4 +11,8 @@ internal class Passenger : Person, ILoad
         Miles = miles;
     }
 
+    public override void AcceptVisitor(IEntityVisitor visitor)
+    {
+        visitor.VisitPassenger(this);
+    }
 }

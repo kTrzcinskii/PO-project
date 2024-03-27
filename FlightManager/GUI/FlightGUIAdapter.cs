@@ -26,8 +26,8 @@ internal class FlightGUIAdapter : FlightGUI
 
     private float GetFlightTimePassed(Flight f)
     {
-        var startTime = TimeSpan.Parse(f.TakeOffTime).TotalSeconds;
-        var endTime = TimeSpan.Parse(f.LandingTime).TotalSeconds;
+        var startTime = f.TakeOffTime.TimeOfDay.TotalSeconds;
+        var endTime = f.LandingTime.TimeOfDay.TotalSeconds;
         var currentTime = DateTime.Now.TimeOfDay.TotalSeconds;
 
         if (startTime < endTime)

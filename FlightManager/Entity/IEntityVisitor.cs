@@ -7,5 +7,5 @@ internal interface IEntityVisitor
     public void VisitCrew(Crew crew);
     public void VisitFlight(Flight flight);
     public void VisitPassenger(Passenger passenger);
-    public void VisitPassengerPlane(Plane plane);
+    public void VisitPassengerPlane(PassengerPlane plane);
 }

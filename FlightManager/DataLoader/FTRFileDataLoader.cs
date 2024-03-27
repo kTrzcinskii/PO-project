@@ -1,5 +1,6 @@
 ﻿using FlightManager.Entity;
 using FlightManager.EntityFactory;
+using FlightManager.Storage;
 
 namespace FlightManager.DataLoader;
 internal class FTRFileDataLoader : IDataLoader
@@ -11,8 +12,9 @@ internal class FTRFileDataLoader : IDataLoader
         factories = Factory.CreateFactoriesContainer();
     }
 
-    public void Load(string dataPath, IList<IEntity> entities, object? entitiesLock = null)
+    public void Load(string dataPath)
     {
+        var visitor = new AddToStorageVisitor();
         var fileContentLines = File.ReadAllLines(dataPath);
 
         foreach (string line in fileContentLines)
@@ -21,7 +23,7 @@ internal class FTRFileDataLoader : IDataLoader
             (var entityName, var parameters) = parsedData;
             Factory factory = factories[entityName];
             IEntity newEntity = factory.CreateInstance(parameters);
-            entities.Add(newEntity);
+            newEntity.AcceptVisitor(visitor);
         }
     }
 

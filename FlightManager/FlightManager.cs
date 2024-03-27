@@ -1,26 +1,25 @@
 ﻿using FlightManager.DataLoader;
 using FlightManager.DataSerializer;
-using FlightManager.Entity;
 using FlightManager.GUI;
+using FlightManager.Storage;
 using FlightTrackerGUI;
 using System.Timers;
 
 namespace FlightManager;
 internal class FlightManager
 {
-    private List<IEntity> Entities { get; init; }
     private IDataLoader DataLoader { get; set; }
     private IDataSerializer DataSerializer { get; set; }
-    private readonly object entitiesLock = new object();
+    private EntityStorage Storage { get; set; }
     private const string EXIT_COMMAND = "exit";
     private const string SNAPSHOT_COMMAND = "print";
     private const int REFRESH_SCREEN_MS = 1000;
 
     public FlightManager(IDataLoader dataLoader, IDataSerializer dataSerializer)
     {
-        Entities = new List<IEntity>();
         DataLoader = dataLoader;
         DataSerializer = dataSerializer;
+        Storage = EntityStorage.GetStorage();
     }
 
     public void StartApp(string dataPath)
@@ -58,20 +57,17 @@ internal class FlightManager
     {
         string time = DateTime.Now.ToString("HH_mm_ss");
         string filePath = $"snapshot_{time}.json";
-        lock (entitiesLock)
-        {
-            SaveEntities(filePath);
-        }
+        SaveEntities(filePath);
     }
 
     private void LoadEntities(string dataPath)
     {
-        DataLoader.Load(dataPath, Entities, entitiesLock);
+        DataLoader.Load(dataPath);
     }
 
     private void SaveEntities(string outputPath)
     {
-        var jsonData = DataSerializer.SerializeData([.. Entities]);
+        var jsonData = DataSerializer.SerializeData([.. Storage.GetAll()]);
         File.WriteAllText(outputPath, jsonData);
     }
 
@@ -91,21 +87,18 @@ internal class FlightManager
 
     private void OnUpdateScreen(object _, ElapsedEventArgs __)
     {
-        var visitor = new UpdateGUIVisitor();
-        lock (entitiesLock)
-        {
-            foreach (var entity in Entities)
-            {
-                entity.AcceptVisitor(visitor);
-            }
-        }
         var list = new List<FlightGUI>();
-        foreach (var flight in visitor.Flights)
+        foreach (var (_, flight) in Storage.GetAllFlights())
         {
             // Airport hasn't been loaded yet
-            if (!visitor.Airports.ContainsKey(flight.OriginID) || !visitor.Airports.ContainsKey(flight.TargetID))
+            var originAirport = Storage.GetAirport(flight.OriginID);
+            if (originAirport == null)
                 continue;
-            list.Add(new FlightGUIAdapter(flight, visitor.Airports[flight.OriginID], visitor.Airports[flight.TargetID]));
+            var targetAirport = Storage.GetAirport(flight.TargetID);
+            if (targetAirport == null)
+                continue;
+
+            list.Add(new FlightGUIAdapter(flight, originAirport, targetAirport));
         }
         Runner.UpdateGUI(new FlightsGUIData(list));
     }

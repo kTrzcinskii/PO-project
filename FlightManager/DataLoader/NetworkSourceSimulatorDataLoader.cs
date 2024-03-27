@@ -1,29 +1,27 @@
 ﻿using FlightManager.Entity;
 using FlightManager.EntityArgumentsParser;
 using FlightManager.EntityFactory;
+using FlightManager.Storage;
 using NSS = NetworkSourceSimulator;
 
 namespace FlightManager.DataLoader;
 internal class NetworkSourceSimulatorDataLoader : IDataLoader
 {
-    private static readonly int minOffsetInMs = 10;
-    private static readonly int maxOffsetInMs = 50;
+    private static readonly int minOffsetInMs = 1;
+    private static readonly int maxOffsetInMs = 5;
     private static readonly int entityCodeLength = 3;
 
     private readonly Dictionary<string, Factory> factories;
-    private object? entLock;
-    private IList<IEntity>? ents;
     private NSS.NetworkSourceSimulator? server;
+    private AddToStorageVisitor addToStorageVisitor = new AddToStorageVisitor();
 
     public NetworkSourceSimulatorDataLoader()
     {
         factories = Factory.CreateFactoriesContainer();
     }
 
-    public void Load(string dataPath, IList<IEntity> entities, object? entitiesLock = null)
+    public void Load(string dataPath)
     {
-        entLock = entitiesLock;
-        ents = entities;
         server = new NSS.NetworkSourceSimulator(dataPath, minOffsetInMs, maxOffsetInMs);
         server.OnNewDataReady += NewDataReadyHandler;
         Task.Run(server.Run);
@@ -42,9 +40,6 @@ internal class NetworkSourceSimulatorDataLoader : IDataLoader
 
         Factory factory = factories[entityName];
         IEntity newEntity = factory.CreateInstance(parameters);
-        lock (entLock!)
-        {
-            ents!.Add(newEntity);
-        }
+        newEntity.AcceptVisitor(addToStorageVisitor);
     }
 }

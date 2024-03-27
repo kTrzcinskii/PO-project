@@ -1,7 +1,5 @@
-﻿using FlightManager.Entity;
-
-namespace FlightManager.DataLoader;
+﻿namespace FlightManager.DataLoader;
 internal interface IDataLoader
 {
-    public void Load(string dataPath, IList<IEntity> entities, object? entitiesLock = null);
+    public void Load(string dataPath);
 }

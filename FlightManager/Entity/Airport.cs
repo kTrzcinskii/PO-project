@@ -1,6 +1,8 @@
-﻿namespace FlightManager.Entity;
+﻿using FlightManager.NewsSource;
 
-internal class Airport : IEntity
+namespace FlightManager.Entity;
+
+internal class Airport : IEntity, IReportable
 {
     public ulong ID { get; init; }
     public string Name { get; init; }
@@ -24,5 +26,10 @@ internal class Airport : IEntity
     public void AcceptVisitor(IEntityVisitor visitor)
     {
         visitor.VisitAirport(this);
+    }
+
+    public void AcceptNewsSource(INewsSource newsSource)
+    {
+        newsSource.GetReport(this);
     }
 }

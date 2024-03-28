@@ -1,6 +1,8 @@
-﻿namespace FlightManager.Entity;
+﻿using FlightManager.NewsSource;
 
-internal class CargoPlane : Plane
+namespace FlightManager.Entity;
+
+internal class CargoPlane : Plane, IReportable
 {
     public float MaxLoad { get; init; }
 
@@ -12,5 +14,10 @@ internal class CargoPlane : Plane
     public override void AcceptVisitor(IEntityVisitor visitor)
     {
         visitor.VisitCargoPlane(this);
+    }
+
+    public void AcceptNewsSource(INewsSource newsSource)
+    {
+        newsSource.GetReport(this);
     }
 }

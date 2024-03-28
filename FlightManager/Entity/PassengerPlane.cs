@@ -1,6 +1,8 @@
-﻿namespace FlightManager.Entity;
+﻿using FlightManager.NewsSource;
 
-internal class PassengerPlane : Plane
+namespace FlightManager.Entity;
+
+internal class PassengerPlane : Plane, IReportable
 {
     public ushort FirstClassSize { get; init; }
     public ushort BusinessClassSize { get; init; }
@@ -16,5 +18,10 @@ internal class PassengerPlane : Plane
     public override void AcceptVisitor(IEntityVisitor visitor)
     {
         visitor.VisitPassengerPlane(this);
+    }
+
+    public void AcceptNewsSource(INewsSource newsSource)
+    {
+        newsSource.GetReport(this);
     }
 }

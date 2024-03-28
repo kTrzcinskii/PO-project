@@ -1,6 +1,7 @@
 ﻿using FlightManager.DataLoader;
 using FlightManager.DataSerializer;
 using FlightManager.GUI;
+using FlightManager.NewsSource;
 using FlightManager.Storage;
 using FlightTrackerGUI;
 using System.Timers;
@@ -13,6 +14,7 @@ internal class FlightManager
     private EntityStorage Storage { get; set; }
     private const string EXIT_COMMAND = "exit";
     private const string SNAPSHOT_COMMAND = "print";
+    private const string REPORT_COMMAND = "report";
     private const int REFRESH_SCREEN_MS = 1000;
 
     public FlightManager(IDataLoader dataLoader, IDataSerializer dataSerializer)
@@ -20,6 +22,7 @@ internal class FlightManager
         DataLoader = dataLoader;
         DataSerializer = dataSerializer;
         Storage = EntityStorage.GetStorage();
+        CreateNewsSources();
     }
 
     public void StartApp(string dataPath)
@@ -43,6 +46,9 @@ internal class FlightManager
                     break;
                 case SNAPSHOT_COMMAND:
                     HandleSnapshot();
+                    break;
+                case REPORT_COMMAND:
+                    HandleReport();
                     break;
             }
         }
@@ -101,5 +107,21 @@ internal class FlightManager
             list.Add(new FlightGUIAdapter(flight, originAirport, targetAirport));
         }
         Runner.UpdateGUI(new FlightsGUIData(list));
+    }
+
+    private void CreateNewsSources()
+    {
+        Storage.Add(new Television("Telewizja Abelowa"));
+        Storage.Add(new Television("Kanał TV-tensor"));
+        Storage.Add(new Radio("Radio Kwantyfikator"));
+        Storage.Add(new Radio("Radio Shmem"));
+        Storage.Add(new Newspaper("Gazeta Kategoryczna"));
+        Storage.Add(new Newspaper("Dziennik Politechniczny"));
+    }
+
+    private void HandleReport()
+    {
+        var generator = new NewsGenerator(Storage.GetNewsSources(), Storage.GetReportables());
+        // implement zip iterator that gives every possible report and print it out
     }
 }

@@ -122,6 +122,10 @@ internal class FlightManager
     private void HandleReport()
     {
         var generator = new NewsGenerator(Storage.GetNewsSources(), Storage.GetReportables());
-        // implement zip iterator that gives every possible report and print it out
+        string? report;
+        while ((report = generator.GenerateNextNews()) != null)
+        {
+            Console.WriteLine(report);
+        }
     }
 }

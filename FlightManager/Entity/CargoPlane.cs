@@ -16,8 +16,8 @@ internal class CargoPlane : Plane, IReportable
         visitor.VisitCargoPlane(this);
     }
 
-    public void AcceptNewsSource(INewsSource newsSource)
+    public string AcceptNewsSource(INewsSource newsSource)
     {
-        newsSource.GetReport(this);
+        return newsSource.GetReport(this);
     }
 }

@@ -1,5 +1,5 @@
 ﻿namespace FlightManager.NewsSource;
 internal interface IReportable
 {
-    public void AcceptNewsSource(INewsSource newsSource);
+    public string AcceptNewsSource(INewsSource newsSource);
 }

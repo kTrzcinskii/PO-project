@@ -28,8 +28,8 @@ internal class Airport : IEntity, IReportable
         visitor.VisitAirport(this);
     }
 
-    public void AcceptNewsSource(INewsSource newsSource)
+    public string AcceptNewsSource(INewsSource newsSource)
     {
-        newsSource.GetReport(this);
+        return newsSource.GetReport(this);
     }
 }

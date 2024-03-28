@@ -20,8 +20,8 @@ internal class PassengerPlane : Plane, IReportable
         visitor.VisitPassengerPlane(this);
     }
 
-    public void AcceptNewsSource(INewsSource newsSource)
+    public string AcceptNewsSource(INewsSource newsSource)
     {
-        newsSource.GetReport(this);
+        return newsSource.GetReport(this);
     }
 }

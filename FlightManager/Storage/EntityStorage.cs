@@ -1,10 +1,13 @@
 ﻿using FlightManager.Entity;
+using FlightManager.NewsSource;
 
 namespace FlightManager.Storage;
 
 internal class EntityStorage
 {
     private List<IEntity> all = new List<IEntity>();
+    private List<IReportable> reportables = new List<IReportable>();
+    private List<INewsSource> newsSources = new List<INewsSource>();
     private Dictionary<ulong, Airport> airports = new Dictionary<ulong, Airport>();
     private Dictionary<ulong, Cargo> cargos = new Dictionary<ulong, Cargo>();
     private Dictionary<ulong, CargoPlane> cargoPlanes = new Dictionary<ulong, CargoPlane>();
@@ -27,6 +30,14 @@ internal class EntityStorage
         lock (entitiesLock)
         {
             return new List<IEntity>(all);
+        }
+    }
+
+    public List<IReportable> GetReportables()
+    {
+        lock (entitiesLock)
+        {
+            return new List<IReportable>(reportables);
         }
     }
 
@@ -53,6 +64,7 @@ internal class EntityStorage
         lock (entitiesLock)
         {
             all.Add(airport);
+            reportables.Add(airport);
             airports.Add(airport.ID, airport);
         }
     }
@@ -107,6 +119,7 @@ internal class EntityStorage
         lock (entitiesLock)
         {
             all.Add(cargoPlane);
+            reportables.Add(cargoPlane);
             cargoPlanes.Add(cargoPlane.ID, cargoPlane);
         }
     }
@@ -214,8 +227,24 @@ internal class EntityStorage
         lock (entitiesLock)
         {
             all.Add(passengerPlane);
+            reportables.Add(passengerPlane);
             passengerPlanes.Add(passengerPlane.ID, passengerPlane);
         }
     }
 
+    public List<INewsSource> GetNewsSources()
+    {
+        lock (entitiesLock)
+        {
+            return new List<INewsSource>(newsSources);
+        }
+    }
+
+    public void Add(INewsSource source)
+    {
+        lock (entitiesLock)
+        {
+            newsSources.Add(source);
+        }
+    }
 }

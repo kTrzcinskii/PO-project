@@ -12,7 +12,6 @@ internal class Newspaper : INewsSource
 
     public string GetReport(Airport airport)
     {
-        // TODO: transform countryISO to country name
         return $"{Name} - A report from {airport.Name} airport, {airport.CountryISO}";
     }
 

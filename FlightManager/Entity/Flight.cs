@@ -7,8 +7,8 @@ internal class Flight : IEntity
     public ulong TargetID { get; init; }
     public DateTime TakeOffTime { get; init; }
     public DateTime LandingTime { get; init; }
-    public float? Longitude { get; init; }
-    public float? Latitude { get; init; }
+    public float? Longitude { get; set; }
+    public float? Latitude { get; set; }
     public float? AMSL { get; init; }
     public ulong PlaneID { get; init; }
     public ulong[] CrewIDs { get; init; }

@@ -15,7 +15,7 @@ internal class FlightManager
     private const string EXIT_COMMAND = "exit";
     private const string SNAPSHOT_COMMAND = "print";
     private const string REPORT_COMMAND = "report";
-    private const int REFRESH_SCREEN_MS = 1000;
+    public const int REFRESH_SCREEN_MS = 1000;
 
     public FlightManager(IDataLoader dataLoader, IDataSerializer dataSerializer)
     {

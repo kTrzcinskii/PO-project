@@ -10,8 +10,8 @@ internal class FlightArgumentsParser : IEntityArgumentsParser<(ulong, ulong, ulo
         ulong targetID = Convert.ToUInt64(data[2]);
         DateTime takeOffTime = DateTime.Parse(data[3]);
         DateTime landingTime = DateTime.Parse(data[4]);
-        float longitude = Convert.ToSingle(data[5], CultureInfo.InvariantCulture);
-        float latitude = Convert.ToSingle(data[6], CultureInfo.InvariantCulture);
+        float? longitude = null;
+        float? latitude = null;
         float AMSL = Convert.ToSingle(data[7], CultureInfo.InvariantCulture);
         ulong planeID = Convert.ToUInt64(data[8]);
         ulong[] crewIDs = Array.ConvertAll(ParametersFormatter.ConvertToArray(data[9]), Convert.ToUInt64);

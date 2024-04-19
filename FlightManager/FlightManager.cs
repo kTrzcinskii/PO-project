@@ -5,22 +5,29 @@ using FlightManager.NewsSource;
 using FlightManager.Storage;
 using FlightTrackerGUI;
 using System.Timers;
+using FlightManager.DataUpdater;
 
 namespace FlightManager;
 internal class FlightManager
 {
     private IDataLoader DataLoader { get; set; }
     private IDataSerializer DataSerializer { get; set; }
+    private IDataUpdater? DataUpdater { get; set; }
     private EntityStorage Storage { get; set; }
     private const string EXIT_COMMAND = "exit";
     private const string SNAPSHOT_COMMAND = "print";
     private const string REPORT_COMMAND = "report";
     public const int REFRESH_SCREEN_MS = 1000;
 
-    public FlightManager(IDataLoader dataLoader, IDataSerializer dataSerializer)
+    public FlightManager(IDataLoader dataLoader, IDataSerializer dataSerializer, IDataUpdater? dataUpdater = null, string? dataUpdateSource = null)
     {
         DataLoader = dataLoader;
         DataSerializer = dataSerializer;
+        if (dataUpdater != null && dataUpdateSource != null)
+        {
+            DataUpdater = dataUpdater;
+            DataLoader.DataLoaded += (object _, EventArgs __) => dataUpdater.StartUpdateLoop(dataUpdateSource);
+        }
         Storage = EntityStorage.GetStorage();
         CreateNewsSources();
     }

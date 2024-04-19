@@ -8,7 +8,7 @@ namespace FlightManager.DataLoader;
 internal class NetworkSourceSimulatorDataLoader : IDataLoader
 {
     private static readonly int minOffsetInMs = 1;
-    private static readonly int maxOffsetInMs = 5;
+    private static readonly int maxOffsetInMs = 2;
     private static readonly int entityCodeLength = 3;
 
     private readonly Dictionary<string, Factory> factories;

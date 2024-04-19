@@ -1,7 +1,7 @@
 ﻿namespace FlightManager.Entity;
 internal abstract class Plane : IEntity
 {
-    public ulong ID { get; init; }
+    public ulong ID { get; set; }
     public string Serial { get; init; }
     public string CountryISO { get; init; }
     public string Model { get; init; }

@@ -11,6 +11,6 @@ namespace FlightManager.Entity;
 [JsonDerivedType(typeof(PassengerPlane), typeDiscriminator: EntitiesIdentifiers.PassengerPlaneID)]
 internal interface IEntity
 {
-    public ulong ID { get; init; }
+    public ulong ID { get; set; }
     public void AcceptVisitor(IEntityVisitor visitor);
 }

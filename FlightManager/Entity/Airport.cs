@@ -4,12 +4,12 @@ namespace FlightManager.Entity;
 
 internal class Airport : IEntity, IReportable
 {
-    public ulong ID { get; init; }
+    public ulong ID { get; set; }
     public string Name { get; init; }
     public string Code { get; init; }
-    public float Longitude { get; init; }
-    public float Latitude { get; init; }
-    public float AMSL { get; init; }
+    public float Longitude { get; set; }
+    public float Latitude { get; set; }
+    public float AMSL { get; set; }
     public string CountryISO { get; init; }
 
     public Airport(ulong iD, string name, string code, float longitude, float latitude, float aMSL, string countryISO)

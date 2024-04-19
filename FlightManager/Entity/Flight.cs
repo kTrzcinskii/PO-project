@@ -2,14 +2,14 @@
 
 internal class Flight : IEntity
 {
-    public ulong ID { get; init; }
+    public ulong ID { get; set; }
     public ulong OriginID { get; init; }
     public ulong TargetID { get; init; }
     public DateTime TakeOffTime { get; init; }
     public DateTime LandingTime { get; init; }
     public float? Longitude { get; set; }
     public float? Latitude { get; set; }
-    public float? AMSL { get; init; }
+    public float? AMSL { get; set; }
     public ulong PlaneID { get; init; }
     public ulong[] CrewIDs { get; init; }
     public ulong[] LoadIDs { get; init; }

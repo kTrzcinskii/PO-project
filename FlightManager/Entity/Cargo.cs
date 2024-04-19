@@ -2,7 +2,7 @@
 
 internal class Cargo : IEntity, ILoad
 {
-    public ulong ID { get; init; }
+    public ulong ID { get; set; }
     public float Weight { get; init; }
     public string Code { get; init; }
     public string Description { get; init; }

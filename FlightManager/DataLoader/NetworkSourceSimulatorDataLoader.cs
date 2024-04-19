@@ -24,8 +24,14 @@ internal class NetworkSourceSimulatorDataLoader : IDataLoader
     {
         server = new NSS.NetworkSourceSimulator(dataPath, minOffsetInMs, maxOffsetInMs);
         server.OnNewDataReady += NewDataReadyHandler;
-        Task.Run(server.Run);
+        Task.Run( () =>
+        {
+            server.Run();
+            DataLoaded?.Invoke(this, EventArgs.Empty);
+        });
     }
+
+    public event IDataLoader.OnDataLoaded? DataLoaded;
 
     private void NewDataReadyHandler(object _, NSS.NewDataReadyArgs args)
     {

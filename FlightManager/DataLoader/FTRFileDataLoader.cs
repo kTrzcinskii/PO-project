@@ -25,7 +25,10 @@ internal class FTRFileDataLoader : IDataLoader
             IEntity newEntity = factory.CreateInstance(parameters);
             newEntity.AcceptVisitor(visitor);
         }
+        DataLoaded?.Invoke(this, EventArgs.Empty);
     }
+
+    public event IDataLoader.OnDataLoaded? DataLoaded;
 
     private (string, string[]) ParseEntry(string data)
     {

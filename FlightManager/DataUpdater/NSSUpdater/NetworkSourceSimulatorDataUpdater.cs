@@ -11,9 +11,11 @@ internal class NetworkSourceSimulatorDataUpdater : IDataUpdater
     private readonly UpdatePositionVisitor positionVisitor = new UpdatePositionVisitor();
     private readonly UpdateContactInfoVisitor contactInfoVisitor = new UpdateContactInfoVisitor();
     private readonly UpdateIDVisitor idVisitor = new UpdateIDVisitor();
+    private Logger logger;
     
     public void StartUpdateLoop(string sourcePath)
     {
+        logger = Logger.GetLogger();
         var server = new NSS.NetworkSourceSimulator(sourcePath, minOffsetInMs, maxOffsetInMs);
         server.OnPositionUpdate += HandlePositionUpdate;
         server.OnContactInfoUpdate += HandleContactInfoUpdate;
@@ -27,7 +29,7 @@ internal class NetworkSourceSimulatorDataUpdater : IDataUpdater
         var entity = storage.GetByID(args.ObjectID);
         if (entity == null)
         {
-            // handle error in logs
+            logger.LogErrorMessage(NSSLogs.ObjectNotFound(args.ObjectID));
             return;
         }
         positionVisitor.Args = args;
@@ -37,8 +39,10 @@ internal class NetworkSourceSimulatorDataUpdater : IDataUpdater
         }
         catch (InvalidOperationException e)
         {
-            // handle error in logs
+            logger.LogErrorMessage(NSSLogs.InvalidOperation(args.ObjectID, "PositionUpdate"));
         }
+
+        logger.LogUpdateMessage(NSSLogs.SuccessfulPositionUpdate(args.ObjectID, args));
     }
 
     private void HandleContactInfoUpdate(object _, NSS.ContactInfoUpdateArgs args)
@@ -47,7 +51,7 @@ internal class NetworkSourceSimulatorDataUpdater : IDataUpdater
         var entity = storage.GetByID(args.ObjectID);
         if (entity == null)
         {
-            // handle error in logs
+            logger.LogErrorMessage(NSSLogs.ObjectNotFound(args.ObjectID));
             return;
         }
 
@@ -58,8 +62,10 @@ internal class NetworkSourceSimulatorDataUpdater : IDataUpdater
         }
         catch (InvalidOperationException e)
         {
-            // handle error in logs
+            logger.LogErrorMessage(NSSLogs.InvalidOperation(args.ObjectID, "ContactInfoUpdate"));
         }
+
+        logger.LogUpdateMessage(NSSLogs.SuccessfulContactInfoUpdate(args.ObjectID, args));
     }
     
     private void HandleIDUpdate(object _, NSS.IDUpdateArgs args)
@@ -68,18 +74,12 @@ internal class NetworkSourceSimulatorDataUpdater : IDataUpdater
         var entity = storage.GetByID(args.ObjectID);
         if (entity == null)
         {
-            // handle error in logs
+            logger.LogErrorMessage(NSSLogs.ObjectNotFound(args.ObjectID));
             return;
         }
 
         idVisitor.Args = args;
-        try
-        {
-            entity.AcceptVisitor(idVisitor);
-        }
-        catch (InvalidOperationException e)
-        {
-            // handle error in logs
-        }
+        entity.AcceptVisitor(idVisitor);
+        logger.LogUpdateMessage(NSSLogs.SuccesfulIDUpdate(args.ObjectID, args));
     }
 }

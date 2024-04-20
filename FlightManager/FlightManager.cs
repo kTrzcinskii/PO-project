@@ -34,6 +34,8 @@ internal class FlightManager
 
     public void StartApp(string dataPath)
     {
+        Logger logger = Logger.GetLogger();
+        logger.StartLogger();
         LoadEntities(dataPath);
         RunGUI();
         HandleApplicationInput();

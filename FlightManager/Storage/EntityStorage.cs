@@ -5,7 +5,7 @@ namespace FlightManager.Storage;
 
 internal class EntityStorage
 {
-    private Dictionary<ulong, IEntity> all = new Dictionary<ulong, IEntity>();
+    private List<IEntity> all = new List<IEntity>();
     private List<IReportable> reportables = new List<IReportable>();
     private List<INewsSource> newsSources = new List<INewsSource>();
     private Dictionary<ulong, Airport> airports = new Dictionary<ulong, Airport>();
@@ -29,13 +29,14 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            return new List<IEntity>(all.Values);
+            return new List<IEntity>(all);
         }
     }
 
     public IEntity? GetByID(ulong id)
     {
-        return all.TryGetValue(id, out IEntity? entity) ? entity : null;
+        var entity = all.Find((e) => e.ID == id);
+        return entity;
     }
     
     public List<IReportable> GetReportables()
@@ -68,9 +69,24 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            all.Add(airport.ID, airport);
+            all.Add(airport);
             reportables.Add(airport);
             airports.Add(airport.ID, airport);
+        }
+    }
+
+    public void RemoveAirport(ulong id)
+    {
+        lock (entitiesLock)
+        {
+            bool contains = airports.TryGetValue(id, out var airport);
+            if (airports.ContainsKey(id))
+                airports.Remove(id);
+            if (contains) 
+            {
+                all.Remove(airport!); 
+                reportables.Remove(airport!);
+            }
         }
     }
 
@@ -96,8 +112,22 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            all.Add(cargo.ID, cargo);
+            all.Add(cargo);
             cargos.Add(cargo.ID, cargo);
+        }
+    }
+
+    public void RemoveCargo(ulong id)
+    {
+        lock (entitiesLock)
+        {
+            bool contains = cargos.TryGetValue(id, out var cargo);
+            if (cargos.ContainsKey(id))
+                cargos.Remove(id);
+            if (contains) 
+            {
+                all.Remove(cargo!); 
+            }
         }
     }
 
@@ -123,12 +153,26 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            all.Add(cargoPlane.ID, cargoPlane);
+            all.Add(cargoPlane);
             reportables.Add(cargoPlane);
             cargoPlanes.Add(cargoPlane.ID, cargoPlane);
         }
     }
 
+    public void RemoveCargoPlane(ulong id)
+    {
+        lock (entitiesLock)
+        {
+            bool contains = cargoPlanes.TryGetValue(id, out var cargoPlane);
+            if (cargoPlanes.ContainsKey(id))
+                cargoPlanes.Remove(id);
+            if (contains) 
+            {
+                all.Remove(cargoPlane!); 
+                reportables.Remove(cargoPlane!);
+            }
+        }
+    }
 
     public Crew? GetCrew(ulong id)
     {
@@ -152,8 +196,22 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            all.Add(c.ID, c);
+            all.Add(c);
             crew.Add(c.ID, c);
+        }
+    }
+
+    public void RemoveCrew(ulong id)
+    {
+        lock (entitiesLock)
+        {
+            bool contains = crew.TryGetValue(id, out var c);
+            if (crew.ContainsKey(id))
+                crew.Remove(id);
+            if (contains) 
+            {
+                all.Remove(c!); 
+            }
         }
     }
 
@@ -179,8 +237,22 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            all.Add(flight.ID, flight);
+            all.Add(flight);
             flights.Add(flight.ID, flight);
+        }
+    }
+
+    public void RemoveFlight(ulong id)
+    {
+        lock (entitiesLock)
+        {
+            bool contains = flights.TryGetValue(id, out var flight);
+            if (flights.ContainsKey(id))
+                flights.Remove(id);
+            if (contains) 
+            {
+                all.Remove(flight!); 
+            }
         }
     }
 
@@ -205,8 +277,22 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            all.Add(passenger.ID, passenger);
+            all.Add(passenger);
             passengers.Add(passenger.ID, passenger);
+        }
+    }
+
+    public void RemovePassenger(ulong id)
+    {
+        lock (entitiesLock)
+        {
+            bool contains = passengers.TryGetValue(id, out var passenger);
+            if (passengers.ContainsKey(id))
+                passengers.Remove(id);
+            if (contains) 
+            {
+                all.Remove(passenger!); 
+            }
         }
     }
 
@@ -231,9 +317,24 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            all.Add(passengerPlane.ID, passengerPlane);
+            all.Add(passengerPlane);
             reportables.Add(passengerPlane);
             passengerPlanes.Add(passengerPlane.ID, passengerPlane);
+        }
+    }
+
+    public void RemovePassengerPlane(ulong id)
+    {
+        lock (entitiesLock)
+        {
+            bool contains = passengerPlanes.TryGetValue(id, out var passengerPlane);
+            if (passengerPlanes.ContainsKey(id))
+                passengerPlanes.Remove(id);
+            if (contains) 
+            {
+                all.Remove(passengerPlane!); 
+                reportables.Remove(passengerPlane!);
+            }
         }
     }
 

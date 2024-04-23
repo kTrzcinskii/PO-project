@@ -5,7 +5,7 @@ namespace FlightManager.Storage;
 
 internal class EntityStorage
 {
-    private List<IEntity> all = new List<IEntity>();
+    private Dictionary<ulong,IEntity> all = new Dictionary<ulong, IEntity>();
     private List<IReportable> reportables = new List<IReportable>();
     private List<INewsSource> newsSources = new List<INewsSource>();
     private Dictionary<ulong, Airport> airports = new Dictionary<ulong, Airport>();
@@ -29,14 +29,15 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            return new List<IEntity>(all);
+            return new List<IEntity>(all.Values);
         }
     }
 
     public IEntity? GetByID(ulong id)
     {
-        var entity = all.Find((e) => e.ID == id);
-        return entity;
+        if (all.ContainsKey(id))
+            return all[id];
+        return null;
     }
     
     public List<IReportable> GetReportables()
@@ -69,7 +70,7 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            all.Add(airport);
+            all.Add(airport.ID, airport);
             reportables.Add(airport);
             airports.Add(airport.ID, airport);
         }
@@ -84,7 +85,7 @@ internal class EntityStorage
                 airports.Remove(id);
             if (contains) 
             {
-                all.Remove(airport!); 
+                all.Remove(id); 
                 reportables.Remove(airport!);
             }
         }
@@ -112,7 +113,7 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            all.Add(cargo);
+            all.Add(cargo.ID, cargo);
             cargos.Add(cargo.ID, cargo);
         }
     }
@@ -126,7 +127,7 @@ internal class EntityStorage
                 cargos.Remove(id);
             if (contains) 
             {
-                all.Remove(cargo!); 
+                all.Remove(id); 
             }
         }
     }
@@ -153,7 +154,7 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            all.Add(cargoPlane);
+            all.Add(cargoPlane.ID, cargoPlane);
             reportables.Add(cargoPlane);
             cargoPlanes.Add(cargoPlane.ID, cargoPlane);
         }
@@ -168,7 +169,7 @@ internal class EntityStorage
                 cargoPlanes.Remove(id);
             if (contains) 
             {
-                all.Remove(cargoPlane!); 
+                all.Remove(id); 
                 reportables.Remove(cargoPlane!);
             }
         }
@@ -196,7 +197,7 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            all.Add(c);
+            all.Add(c.ID, c);
             crew.Add(c.ID, c);
         }
     }
@@ -210,7 +211,7 @@ internal class EntityStorage
                 crew.Remove(id);
             if (contains) 
             {
-                all.Remove(c!); 
+                all.Remove(id); 
             }
         }
     }
@@ -237,7 +238,7 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            all.Add(flight);
+            all.Add(flight.ID, flight);
             flights.Add(flight.ID, flight);
         }
     }
@@ -251,7 +252,7 @@ internal class EntityStorage
                 flights.Remove(id);
             if (contains) 
             {
-                all.Remove(flight!); 
+                all.Remove(id); 
             }
         }
     }
@@ -277,7 +278,7 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            all.Add(passenger);
+            all.Add(passenger.ID, passenger);
             passengers.Add(passenger.ID, passenger);
         }
     }
@@ -291,7 +292,7 @@ internal class EntityStorage
                 passengers.Remove(id);
             if (contains) 
             {
-                all.Remove(passenger!); 
+                all.Remove(id); 
             }
         }
     }
@@ -317,7 +318,7 @@ internal class EntityStorage
     {
         lock (entitiesLock)
         {
-            all.Add(passengerPlane);
+            all.Add(passengerPlane.ID, passengerPlane);
             reportables.Add(passengerPlane);
             passengerPlanes.Add(passengerPlane.ID, passengerPlane);
         }
@@ -332,7 +333,7 @@ internal class EntityStorage
                 passengerPlanes.Remove(id);
             if (contains) 
             {
-                all.Remove(passengerPlane!); 
+                all.Remove(id); 
                 reportables.Remove(passengerPlane!);
             }
         }

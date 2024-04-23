@@ -15,4 +15,6 @@ public static class NSSLogs
 
     public static string SuccesfulIDUpdate(ulong ID, NSS.IDUpdateArgs args) =>
         $"Successfully updated ID of object with ID {ID} to ({args.NewObjectID})";
+
+    public static string IDAlreadyUsed(ulong ID) => $"ID {ID} is already used";
 }

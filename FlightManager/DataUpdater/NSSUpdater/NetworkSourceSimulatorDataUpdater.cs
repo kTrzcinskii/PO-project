@@ -78,6 +78,12 @@ internal class NetworkSourceSimulatorDataUpdater : IDataUpdater
             return;
         }
 
+        if (storage.GetByID(args.NewObjectID) != null)
+        {
+            logger.LogErrorMessage(NSSLogs.IDAlreadyUsed(args.NewObjectID));
+            return;
+        }
+
         idVisitor.Args = args;
         entity.AcceptVisitor(idVisitor);
         logger.LogUpdateMessage(NSSLogs.SuccesfulIDUpdate(args.ObjectID, args));

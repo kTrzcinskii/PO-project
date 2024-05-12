@@ -1,4 +1,5 @@
 ﻿using FlightManager.NewsSource;
+using FlightManager.Query;
 
 namespace FlightManager.Entity;
 
@@ -28,8 +29,32 @@ internal class Airport : IEntity, IReportable
         visitor.VisitAirport(this);
     }
 
+    public bool MatchCondition(QueryCondition condition)
+    {
+        switch (condition.Property)
+        {
+            case "ID":
+                return condition.Check(ID);
+            case "Name":
+                return condition.Check(Name);
+            case "Code":
+                return condition.Check(Code);
+            case "Longitude":
+                return condition.Check(Longitude);
+            case "Latitude":
+                return condition.Check(Latitude);
+            case "AMSL":
+                return condition.Check(AMSL);
+            case "CountryISO":
+                return condition.Check(CountryISO);
+        }
+
+        return false;
+    }
+
     public string AcceptNewsSource(INewsSource newsSource)
     {
         return newsSource.GetReport(this);
     }
+    
 }

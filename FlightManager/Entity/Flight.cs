@@ -1,4 +1,6 @@
-﻿namespace FlightManager.Entity;
+﻿using FlightManager.Query;
+
+namespace FlightManager.Entity;
 
 internal class Flight : IEntity
 {
@@ -32,5 +34,32 @@ internal class Flight : IEntity
     public void AcceptVisitor(IEntityVisitor visitor)
     {
         visitor.VisitFlight(this);
+    }
+
+    public bool MatchCondition(QueryCondition condition)
+    {
+        switch (condition.Property)
+        {
+            case "ID":
+                return condition.Check(ID);
+            case "OriginID":
+                return condition.Check(OriginID);
+            case "TargetID":
+                return condition.Check(TargetID);
+            case "TakeOffTime":
+                return condition.Check(TakeOffTime);
+            case "LandingTime":
+                return condition.Check(LandingTime);
+            case "Longitude":
+                return condition.Check(Longitude!.Value);
+            case "Latitude":
+                return condition.Check(Latitude!.Value);
+            case "AMSL":
+                return condition.Check(AMSL!.Value);
+            case "PlaneID":
+                return condition.Check(PlaneID);
+        }
+
+        return false;
     }
 }

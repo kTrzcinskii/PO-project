@@ -1,4 +1,6 @@
-﻿namespace FlightManager.Entity;
+﻿using FlightManager.Query;
+
+namespace FlightManager.Entity;
 internal abstract class Person : IEntity
 {
     public ulong ID { get; set; }
@@ -17,4 +19,22 @@ internal abstract class Person : IEntity
     }
 
     public abstract void AcceptVisitor(IEntityVisitor visitor);
+    public virtual bool MatchCondition(QueryCondition condition)
+    {
+        switch (condition.Property)
+        {
+            case "ID":
+                return condition.Check(ID);
+            case "Name":
+                return condition.Check(Name);
+            case "Age":
+                return condition.Check(Age);
+            case "Phone":
+                return condition.Check(Phone);
+            case "Email":
+                return condition.Check(Email);
+        }
+
+        return false;   
+    }
 }

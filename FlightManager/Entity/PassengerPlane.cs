@@ -1,4 +1,5 @@
 ﻿using FlightManager.NewsSource;
+using FlightManager.Query;
 
 namespace FlightManager.Entity;
 
@@ -23,5 +24,20 @@ internal class PassengerPlane : Plane, IReportable
     public string AcceptNewsSource(INewsSource newsSource)
     {
         return newsSource.GetReport(this);
+    }
+
+    public override bool MatchCondition(QueryCondition condition)
+    {
+        switch (condition.Property)
+        {
+            case "FirstClassSize":
+                return condition.Check(FirstClassSize);
+            case "BusinessClassSize":
+                return condition.Check(BusinessClassSize);
+            case "EconomyClassSize":
+                return condition.Check(EconomyClassSize);
+            default:
+                return base.MatchCondition(condition);
+        }
     }
 }

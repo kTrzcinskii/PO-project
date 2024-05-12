@@ -1,4 +1,6 @@
-﻿namespace FlightManager.Entity;
+﻿using FlightManager.Query;
+
+namespace FlightManager.Entity;
 
 internal class Crew : Person
 {
@@ -14,5 +16,18 @@ internal class Crew : Person
     public override void AcceptVisitor(IEntityVisitor visitor)
     {
         visitor.VisitCrew(this);
+    }
+
+    public override bool MatchCondition(QueryCondition condition)
+    {
+        switch (condition.Property)
+        {
+            case "Practice":
+                return condition.Check(Practice);
+            case "Role":
+                return condition.Check(Role);
+            default:
+                return base.MatchCondition(condition);
+        }
     }
 }

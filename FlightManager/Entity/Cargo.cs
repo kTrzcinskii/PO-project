@@ -1,4 +1,6 @@
-﻿namespace FlightManager.Entity;
+﻿using FlightManager.Query;
+
+namespace FlightManager.Entity;
 
 internal class Cargo : IEntity, ILoad
 {
@@ -18,5 +20,22 @@ internal class Cargo : IEntity, ILoad
     public void AcceptVisitor(IEntityVisitor visitor)
     {
         visitor.VisitCargo(this);
+    }
+
+    public bool MatchCondition(QueryCondition condition)
+    {
+        switch (condition.Property)
+        {
+            case "ID":
+                return condition.Check(ID);
+            case "Weight":
+                return condition.Check(Weight);
+            case "Code":
+                return condition.Check(Code);
+            case "Description":
+                return condition.Check(Description);
+        }
+
+        return false;
     }
 }

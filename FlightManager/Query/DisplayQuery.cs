@@ -1,9 +1,22 @@
-﻿namespace FlightManager.Query;
+﻿using FlightManager.Entity;
 
-public class DisplayQuery : IQuery
+namespace FlightManager.Query;
+
+internal class DisplayQuery<T> : FilterableQuery<T> where T : IEntity
 {
-    public void Execute()
+    public DisplayQuery(List<QueryCondition>? conditions, List<T> entities) : base(conditions, entities)
     {
-        throw new NotImplementedException();
     }
+
+    private void PrintData(List<T> data)
+    {
+        Console.WriteLine("XD");
+    }
+    
+    public override void Execute()
+    {
+        var data = FilterData();
+        PrintData(data);
+    }
+
 }

@@ -1,6 +1,6 @@
 ﻿namespace FlightManager.Query;
 
-public interface IQuery
+internal interface IQuery
 {
-    void Execute();
+    public void Execute();
 }

@@ -1,9 +1,16 @@
-﻿namespace FlightManager.Query;
+﻿using FlightManager.Entity;
 
-public class UpdateQuery : IQuery
+namespace FlightManager.Query;
+
+internal class UpdateQuery<T> : FilterableQuery<T> where T : IEntity
 {
-    public void Execute()
+    public UpdateQuery(List<QueryCondition>? conditions, List<T> entities) : base(conditions, entities)
+    {
+    }
+    
+    public override void Execute()
     {
         throw new NotImplementedException();
     }
+
 }

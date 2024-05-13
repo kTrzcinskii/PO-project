@@ -5,6 +5,19 @@ namespace FlightManager.Entity;
 
 internal class Airport : IEntity, IReportable
 {
+    private static class FieldsNames
+    {
+        public const string ID = "ID";
+        public const string Name = "Name";
+        public const string Code = "Code";
+        public const string Longitude = "Longitude";
+        public const string Latitude = "Latitude";
+        public const string AMSL = "AMSL";
+        public const string CountryISO = "CountryISO";
+
+        public static List<string> allFields = new List<string>() { ID, Name, Code, Longitude, Latitude, AMSL, CountryISO };
+    }
+    
     public ulong ID { get; set; }
     public string Name { get; init; }
     public string Code { get; init; }
@@ -13,15 +26,24 @@ internal class Airport : IEntity, IReportable
     public float AMSL { get; set; }
     public string CountryISO { get; init; }
 
+    private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
+
     public Airport(ulong iD, string name, string code, float longitude, float latitude, float aMSL, string countryISO)
     {
         ID = iD;
+        _fields.Add(FieldsNames.ID, ID);
         Name = name;
+        _fields.Add(FieldsNames.Name, Name);
         Code = code;
+        _fields.Add(FieldsNames.Code, Code);
         Longitude = longitude;
+        _fields.Add(FieldsNames.Longitude, Longitude);
         Latitude = latitude;
+        _fields.Add(FieldsNames.Latitude, Latitude);
         AMSL = aMSL;
+        _fields.Add(FieldsNames.AMSL, AMSL);
         CountryISO = countryISO;
+        _fields.Add(FieldsNames.CountryISO, CountryISO);
     }
 
     public void AcceptVisitor(IEntityVisitor visitor)
@@ -31,25 +53,21 @@ internal class Airport : IEntity, IReportable
 
     public bool MatchCondition(QueryCondition condition)
     {
-        switch (condition.Property)
-        {
-            case "ID":
-                return condition.Check(ID);
-            case "Name":
-                return condition.Check(Name);
-            case "Code":
-                return condition.Check(Code);
-            case "Longitude":
-                return condition.Check(Longitude);
-            case "Latitude":
-                return condition.Check(Latitude);
-            case "AMSL":
-                return condition.Check(AMSL);
-            case "CountryISO":
-                return condition.Check(CountryISO);
-        }
+        if (!_fields.ContainsKey(condition.Property))
+            throw new ArgumentException("Invalid fieldName");
+        return condition.Check(_fields[condition.Property]);
+    }
 
-        return false;
+    public static List<string> GetAllFieldsNames()
+    {
+        return FieldsNames.allFields;
+    }
+
+    public IComparable GetFieldValue(string fieldName)
+    {
+        if (!_fields.ContainsKey(fieldName))
+            throw new ArgumentException("Invalid fieldName");
+        return _fields[fieldName];
     }
 
     public string AcceptNewsSource(INewsSource newsSource)

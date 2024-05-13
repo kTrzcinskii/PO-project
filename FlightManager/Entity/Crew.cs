@@ -4,13 +4,25 @@ namespace FlightManager.Entity;
 
 internal class Crew : Person
 {
+    private static class FieldsNames
+    {
+        public const string Practice = "Practice";
+        public const string Role = "Role";
+
+        public static List<string> allFields = new List<string>() { Practice, Role };
+    }
+    
     public ushort Practice { get; init; }
     public string Role { get; init; }
+    
+    private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
 
     public Crew(ulong iD, string name, ulong age, string phone, string email, ushort practice, string role) : base(iD, name, age, phone, email)
     {
         Practice = practice;
+        _fields.Add(FieldsNames.Practice, Practice);
         Role = role;
+        _fields.Add(FieldsNames.Role, Role);
     }
 
     public override void AcceptVisitor(IEntityVisitor visitor)
@@ -20,14 +32,23 @@ internal class Crew : Person
 
     public override bool MatchCondition(QueryCondition condition)
     {
-        switch (condition.Property)
-        {
-            case "Practice":
-                return condition.Check(Practice);
-            case "Role":
-                return condition.Check(Role);
-            default:
-                return base.MatchCondition(condition);
-        }
+        if (!_fields.ContainsKey(condition.Property))
+            return base.MatchCondition(condition);
+        return condition.Check(_fields[condition.Property]);
+    }
+
+    public override IComparable GetFieldValue(string fieldName)
+    {
+        if (!_fields.ContainsKey(fieldName))
+            return base.GetFieldValue(fieldName);
+        return _fields[fieldName];
+    }
+    
+    public new static List<string> GetAllFieldsNames()
+    {
+        var all = new List<string>();
+        all.AddRange(FieldsNames.allFields);
+        all.AddRange(Person.GetAllFieldsNames());
+        return all;
     }
 }

@@ -80,6 +80,7 @@ internal class DisplayQuery<T> : FilterableQuery<T> where T : IEntity
             row.Remove(row.Length - 1, 1);
             Console.WriteLine(row);
         }
+        Console.WriteLine();
     }
     
     public override void Execute()

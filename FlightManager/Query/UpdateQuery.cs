@@ -4,7 +4,7 @@ namespace FlightManager.Query;
 
 internal class UpdateQuery<T> : FilterableQuery<T> where T : IEntity
 {
-    public UpdateQuery(List<QueryCondition>? conditions, List<T> entities) : base(conditions, entities)
+    public UpdateQuery(List<QueryCondition>? andConditions, List<QueryCondition>? orConditions, List<T> entities) : base(andConditions, orConditions, entities)
     {
     }
     

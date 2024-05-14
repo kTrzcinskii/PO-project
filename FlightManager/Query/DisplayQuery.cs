@@ -7,7 +7,7 @@ internal class DisplayQuery<T> : FilterableQuery<T> where T : IEntity
 {
     private List<string>? _fields;
     
-    public DisplayQuery(List<QueryCondition>? conditions, List<T> entities, List<string>? fields) : base(conditions, entities)
+    public DisplayQuery(List<QueryCondition>? andConditions, List<QueryCondition>? orConditions, List<T> entities, List<string>? fields) : base(andConditions, orConditions, entities)
     {
         _fields = fields;
     }

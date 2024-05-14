@@ -4,26 +4,39 @@ namespace FlightManager.Query;
 
 internal abstract class FilterableQuery<T> : IQuery where T : IEntity
 {
-    protected List<QueryCondition>? _conditions;
+    protected List<QueryCondition>? _andConditions;
+    protected List<QueryCondition>? _orConditions;
     protected List<T> _entities;
 
-    protected FilterableQuery(List<QueryCondition>? conditions, List<T> entities)
+    protected FilterableQuery(List<QueryCondition>? andConditions, List<QueryCondition>? orConditions, List<T> entities)
     {
-        _conditions = conditions;
+        _andConditions = andConditions;
+        _orConditions = orConditions;
         _entities = entities;
     }
 
     protected List<T> FilterData()
     {
-        if (_conditions == null)
+        if (_andConditions == null && _orConditions == null)
             return _entities;
         var result = new List<T>();
-        foreach (var entity in _entities)
+        if (_andConditions != null)
         {
-            if (entity.MatchConditions(_conditions))
-                result.Add(entity);
+            foreach (var entity in _entities)
+            {
+                if (entity.MatchAllConditions(_andConditions))
+                    result.Add(entity);
+            }
         }
 
+        if (_orConditions != null)
+        {
+            foreach (var entity in _entities)
+            {
+                if (entity.MatchAnyCondition(_orConditions))
+                    result.Add(entity);
+            }
+        }
         return result;
     }
     

@@ -1,4 +1,5 @@
-﻿using FlightManager.Entity;
+﻿using System.Text;
+using FlightManager.Entity;
 
 namespace FlightManager.Query;
 
@@ -22,7 +23,7 @@ internal class DisplayQuery<T> : FilterableQuery<T> where T : IEntity
         
         foreach (var field in _fields)
         {
-            dict.Add(field, (new List<object>(), 0));
+            dict.Add(field, (new List<object>(), field.Length));
         }
 
         foreach (var entity in data)
@@ -43,16 +44,49 @@ internal class DisplayQuery<T> : FilterableQuery<T> where T : IEntity
         return dict;
     }
     
-    private void PrintData(Dictionary<string, (List<object> rows, int requiredColumnWidth)> columns)
+    private void PrintData(Dictionary<string, (List<object> rows, int requiredColumnWidth)> columns, int rowCount)
     {
-        Console.WriteLine("XD");
+        // Display header and splitter
+        var header = new StringBuilder();
+        var splitter = new StringBuilder();
+        foreach (var fieldName in _fields!)
+        {
+            int width = columns[fieldName].requiredColumnWidth;
+            string format = "{0,-" + width + "}";
+            header.Append(' ');
+            splitter.Append('-');
+            header.Append(String.Format(format, fieldName));
+            splitter.Append('-', width);
+            header.Append(" |");
+            splitter.Append("-+");
+        }
+        header.Remove(header.Length - 1, 1);
+        splitter.Remove(splitter.Length - 1, 1);
+        Console.WriteLine(header);
+        Console.WriteLine(splitter);
+        // Display rows
+        for (int i = 0; i < rowCount; i++)
+        {
+            var row = new StringBuilder();
+            foreach (var fieldName in _fields!)
+            {
+                int width = columns[fieldName].requiredColumnWidth;
+                var value = columns[fieldName].rows[i];
+                string format = "{0," + width + "}";
+                row.Append(' ');
+                row.Append(String.Format(format, value));
+                row.Append(" |");
+            }
+            row.Remove(row.Length - 1, 1);
+            Console.WriteLine(row);
+        }
     }
     
     public override void Execute()
     {
         var data = FilterData();
         var columns = PrepareColumns(data);
-        PrintData(columns);
+        PrintData(columns, data.Count);
     }
 
 }

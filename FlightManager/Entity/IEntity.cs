@@ -16,22 +16,6 @@ internal interface IEntity
     public ulong ID { get; set; }
     public void AcceptVisitor(IEntityVisitor visitor);
 
-    public bool MatchAllConditions(List<QueryCondition> conditions)
-    {
-        foreach (var condition in conditions)
-            if (!MatchCondition(condition))
-                return false;
-        return true;
-    }
-
-    public bool MatchAnyCondition(List<QueryCondition> conditions)
-    {
-        foreach (var condition in conditions)
-            if (MatchCondition(condition))
-                return true;
-        return false;
-    }
-
     public bool MatchCondition(QueryCondition condition);
 
     public static virtual List<string> GetAllFieldsNames()

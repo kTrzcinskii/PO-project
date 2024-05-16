@@ -18,4 +18,15 @@ internal static class EntitiesIdentifiers
     public const string NewPassengerPlaneID = "NPP";
 
     public static readonly Dictionary<string, string> NewEntityIdentifier = new Dictionary<string, string>() { { NewAirportID, AirportID }, { NewCargoID, CargoID }, { NewCargoPlaneID, CargoPlaneID }, { NewCrewID, CrewID }, { NewFlightID, FlightID }, { NewPassengerID, PassengerID }, { NewPassengerPlaneID, PassengerPlaneID } };
+
+    public static readonly Dictionary<string, string> FullNameToIdentifier = new Dictionary<string, string>()
+    {
+        { "Airport", AirportID },
+        { "Cargo", CargoID },
+        { "CargoPlane", CargoPlaneID },
+        { "Crew", CrewID },
+        { "Flight", FlightID },
+        { "Passenger", PassengerID },
+        { "PassengerPlane", PassengerPlaneID }
+    };
 }

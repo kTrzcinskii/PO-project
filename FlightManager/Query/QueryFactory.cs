@@ -1,15 +1,9 @@
-﻿namespace FlightManager.Query;
+﻿using System.Text.RegularExpressions;
+using FlightManager.Entity;
+using FlightManager.Storage;
 
-// TODO:
-// 1) The command which operates on some already existing data (so i think everything except add) should have
-// property which will be list of all elements of this class
-// 2) When filtring, i want to do somethin like:
-// foreach obj in list
-//  foreach condition in conditions (here also something smart for managing or/and etc
-//      obj.Check(condition)
-// condition should be class with fields: (property, value, conditionType)
-// conditionType should be enum with possibilites (equal, greater, lower, greater-equal, lower-equal)
-public class QueryFactory
+namespace FlightManager.Query;
+internal class QueryFactory
 {
     private delegate IQuery CreateQueryDelegate(string query);
 
@@ -37,16 +31,30 @@ public class QueryFactory
 
     private static  IQuery CreateDeleteQuery(string query)
     {
-        return new DeleteQuery();
+        throw new NotImplementedException();
     }
 
     private static IQuery CreateDisplayQuery(string query)
     {
-        return new DisplayQuery();
+        string pattern = @"display .*? from (\w+)(?: where .*)?$";
+        Regex regex = new Regex(pattern);
+        Match match = regex.Match(query);
+
+        if (!match.Success)
+            throw new ArgumentException("invalid query");
+
+        string classID = QueryParser.ClassNameToIdentifier(match.Groups[1].Value);
+
+        var fields = QueryParser.ParseFields(query.Substring(query.IndexOf(' '), query.IndexOf("from") - query.IndexOf(' ')));
+
+        var condtitionChain = QueryParser.ParseConditions(query.Substring(query.IndexOf("where") + "where ".Length), classID);
+        
+        // TODO: dont harcode type but base it on classID
+        return new DisplayQuery<Airport>(condtitionChain, EntityStorage.GetStorage().GetAllAirports().Values.ToList(), fields);
     }
 
     private static IQuery CreateUpdateQuery(string query)
     {
-        return new UpdateQuery();
+        throw new NotImplementedException();
     }
 }

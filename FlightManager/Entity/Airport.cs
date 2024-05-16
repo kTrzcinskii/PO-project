@@ -5,7 +5,7 @@ namespace FlightManager.Entity;
 
 internal class Airport : IEntity, IReportable
 {
-    private static class FieldsNames
+    public static class FieldsNames
     {
         public const string ID = "ID";
         public const string Name = "Name";

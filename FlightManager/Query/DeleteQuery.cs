@@ -6,7 +6,7 @@ internal class DeleteQuery<T> : FilterableQuery<T> where T : IEntity
 {
     private DeletingVisitor visitor;
     
-    public DeleteQuery(List<QueryCondition>? andConditions, List<QueryCondition>? orConditions, List<T> entities) : base(andConditions, orConditions, entities)
+    public DeleteQuery(ConditionChain? conditions, List<T> entities) : base(conditions, entities)
     {
         visitor = new DeletingVisitor();
     }

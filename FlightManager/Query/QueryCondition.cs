@@ -1,9 +1,9 @@
 ﻿namespace FlightManager.Query;
 
-public struct QueryCondition(string property, object value, QueryConditionType type)
+public struct QueryCondition(string property, IComparable value, QueryConditionType type)
 {
     public string Property = property;
-    private readonly object _value = value;
+    private readonly IComparable _value = value;
     private readonly QueryConditionType _type = type;
 
     public bool Check(IComparable property)

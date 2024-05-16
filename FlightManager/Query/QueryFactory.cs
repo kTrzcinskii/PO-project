@@ -5,6 +5,17 @@ using FlightManager.Storage;
 namespace FlightManager.Query;
 internal class QueryFactory
 {
+    private class CreateHelpers
+    {
+        public Func<ConditionChain?, List<string>?, IQuery> DisplayCreator;
+
+        public CreateHelpers(Func<ConditionChain?, List<string>?, IQuery> displayCreator)
+        {
+            // TODO: there will go creators for other query types
+            DisplayCreator = displayCreator;
+        }
+    }
+    
     private delegate IQuery CreateQueryDelegate(string query);
 
     private static readonly Dictionary<string, CreateQueryDelegate> QueryCreateFunctions =
@@ -14,6 +25,18 @@ internal class QueryFactory
             { "delete", CreateDeleteQuery },
             { "add", CreateAddQuery },
             { "update", CreateUpdateQuery }
+        };
+
+    private static readonly Dictionary<string, CreateHelpers> QueryCreateHelpers =
+        new Dictionary<string, CreateHelpers>()
+        {
+            { EntitiesIdentifiers.AirportID, new CreateHelpers(CreateAirportDisplayQuery) },
+            { EntitiesIdentifiers.CargoID, new CreateHelpers(CreateCargoDisplayQuery) },
+            { EntitiesIdentifiers.CargoPlaneID, new CreateHelpers(CreateCargoPlaneDisplayQuery) },
+            { EntitiesIdentifiers.CrewID, new CreateHelpers(CreateCrewDisplayQuery) },
+            { EntitiesIdentifiers.FlightID, new CreateHelpers(CreateFlightDisplayQuery) },
+            { EntitiesIdentifiers.PassengerID, new CreateHelpers(CreatePassengerDisplayQuery) },
+            { EntitiesIdentifiers.PassengerPlaneID, new CreateHelpers(CreatePassengerPlaneDisplayQuery) },
         };
     
     public IQuery CreateQuery(string query)
@@ -47,10 +70,44 @@ internal class QueryFactory
 
         var fields = QueryParser.ParseFields(query.Substring(query.IndexOf(' '), query.IndexOf("from") - query.IndexOf(' ')));
 
-        var condtitionChain = QueryParser.ParseConditions(query.Substring(query.IndexOf("where") + "where ".Length), classID);
-        
-        // TODO: dont harcode type but base it on classID
-        return new DisplayQuery<Airport>(condtitionChain, EntityStorage.GetStorage().GetAllAirports().Values.ToList(), fields);
+        var conditionChain = QueryParser.ParseConditions(query.Substring(query.IndexOf("where") + "where ".Length), classID);
+
+        return QueryCreateHelpers[classID].DisplayCreator.Invoke(conditionChain, fields);
+    }
+
+    private static IQuery CreateAirportDisplayQuery(ConditionChain? conditionChain, List<string>? fields)
+    {
+        return new DisplayQuery<Airport>(conditionChain, EntityStorage.GetStorage().GetAllAirports().Values.ToList(), fields);
+    }
+
+    private static IQuery CreateCargoDisplayQuery(ConditionChain? conditionChain, List<string>? fields)
+    {
+        return new DisplayQuery<Cargo>(conditionChain, EntityStorage.GetStorage().GetAllCargos().Values.ToList(), fields);
+    }
+    
+    private static IQuery CreateCargoPlaneDisplayQuery(ConditionChain? conditionChain, List<string>? fields)
+    {
+        return new DisplayQuery<CargoPlane>(conditionChain, EntityStorage.GetStorage().GetAllCargoPlanes().Values.ToList(), fields);
+    }
+    
+    private static IQuery CreateCrewDisplayQuery(ConditionChain? conditionChain, List<string>? fields)
+    {
+        return new DisplayQuery<Crew>(conditionChain, EntityStorage.GetStorage().GetAllCrews().Values.ToList(), fields);
+    }
+    
+    private static IQuery CreateFlightDisplayQuery(ConditionChain? conditionChain, List<string>? fields)
+    {
+        return new DisplayQuery<Flight>(conditionChain, EntityStorage.GetStorage().GetAllFlights().Values.ToList(), fields);
+    }
+    
+    private static IQuery CreatePassengerDisplayQuery(ConditionChain? conditionChain, List<string>? fields)
+    {
+        return new DisplayQuery<Passenger>(conditionChain, EntityStorage.GetStorage().GetAllPassengers().Values.ToList(), fields);
+    }
+    
+    private static IQuery CreatePassengerPlaneDisplayQuery(ConditionChain? conditionChain, List<string>? fields)
+    {
+        return new DisplayQuery<PassengerPlane>(conditionChain, EntityStorage.GetStorage().GetAllPassengerPlanes().Values.ToList(), fields);
     }
 
     private static IQuery CreateUpdateQuery(string query)

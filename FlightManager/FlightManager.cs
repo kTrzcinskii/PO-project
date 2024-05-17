@@ -6,6 +6,7 @@ using FlightManager.Storage;
 using FlightTrackerGUI;
 using System.Timers;
 using FlightManager.DataUpdater;
+using FlightManager.Query;
 
 namespace FlightManager;
 internal class FlightManager
@@ -14,6 +15,7 @@ internal class FlightManager
     private IDataSerializer DataSerializer { get; set; }
     private IDataUpdater? DataUpdater { get; set; }
     private EntityStorage Storage { get; set; }
+    private QueryFactory QueryCreator { get; init; }
     private const string EXIT_COMMAND = "exit";
     private const string SNAPSHOT_COMMAND = "print";
     private const string REPORT_COMMAND = "report";
@@ -30,6 +32,7 @@ internal class FlightManager
         }
         Storage = EntityStorage.GetStorage();
         CreateNewsSources();
+        QueryCreator = new QueryFactory();
     }
 
     public void StartApp(string dataPath)
@@ -58,6 +61,9 @@ internal class FlightManager
                     break;
                 case REPORT_COMMAND:
                     HandleReport();
+                    break;
+                default:
+                    HandleQuery(command);
                     break;
             }
         }
@@ -135,6 +141,19 @@ internal class FlightManager
         while ((report = generator.GenerateNextNews()) != null)
         {
             Console.WriteLine(report);
+        }
+    }
+
+    private void HandleQuery(string queryCommand)
+    {
+        try
+        {
+            IQuery query = QueryCreator.CreateQuery(queryCommand);
+            query.Execute();
+        }
+        catch (ArgumentException)
+        {
+            Console.WriteLine("Invalid syntax\n");
         }
     }
 }

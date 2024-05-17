@@ -8,11 +8,13 @@ internal class QueryFactory
     private class CreateHelpers
     {
         public Func<ConditionChain?, List<string>?, IQuery> DisplayCreator;
-
-        public CreateHelpers(Func<ConditionChain?, List<string>?, IQuery> displayCreator)
+        public Func<ConditionChain?, IQuery> DeleteCreator;
+        
+        public CreateHelpers(Func<ConditionChain?, List<string>?, IQuery> displayCreator, Func<ConditionChain?, IQuery> deleteCreator)
         {
             // TODO: there will go creators for other query types
             DisplayCreator = displayCreator;
+            DeleteCreator = deleteCreator;
         }
     }
     
@@ -30,13 +32,13 @@ internal class QueryFactory
     private static readonly Dictionary<string, CreateHelpers> QueryCreateHelpers =
         new Dictionary<string, CreateHelpers>()
         {
-            { EntitiesIdentifiers.AirportID, new CreateHelpers(CreateAirportDisplayQuery) },
-            { EntitiesIdentifiers.CargoID, new CreateHelpers(CreateCargoDisplayQuery) },
-            { EntitiesIdentifiers.CargoPlaneID, new CreateHelpers(CreateCargoPlaneDisplayQuery) },
-            { EntitiesIdentifiers.CrewID, new CreateHelpers(CreateCrewDisplayQuery) },
-            { EntitiesIdentifiers.FlightID, new CreateHelpers(CreateFlightDisplayQuery) },
-            { EntitiesIdentifiers.PassengerID, new CreateHelpers(CreatePassengerDisplayQuery) },
-            { EntitiesIdentifiers.PassengerPlaneID, new CreateHelpers(CreatePassengerPlaneDisplayQuery) },
+            { EntitiesIdentifiers.AirportID, new CreateHelpers(CreateAirportDisplayQuery, CreateAirportDeleteQuery) },
+            { EntitiesIdentifiers.CargoID, new CreateHelpers(CreateCargoDisplayQuery, CreateCargoDeleteQuery) },
+            { EntitiesIdentifiers.CargoPlaneID, new CreateHelpers(CreateCargoPlaneDisplayQuery, CreateCargoPlaneDeleteQuery) },
+            { EntitiesIdentifiers.CrewID, new CreateHelpers(CreateCrewDisplayQuery, CreateCrewDeleteQuery) },
+            { EntitiesIdentifiers.FlightID, new CreateHelpers(CreateFlightDisplayQuery, CreateFlightDeleteQuery) },
+            { EntitiesIdentifiers.PassengerID, new CreateHelpers(CreatePassengerDisplayQuery, CreatePassengerDeleteQuery) },
+            { EntitiesIdentifiers.PassengerPlaneID, new CreateHelpers(CreatePassengerPlaneDisplayQuery, CreatePassengerPlaneDeleteQuery) },
         };
     
     public IQuery CreateQuery(string query)
@@ -54,9 +56,53 @@ internal class QueryFactory
 
     private static  IQuery CreateDeleteQuery(string query)
     {
-        throw new NotImplementedException();
+        string pattern = @"delete (\w+)(?: where .*)?$";
+        Regex regex = new Regex(pattern);
+        Match match = regex.Match(query);
+
+        if (!match.Success)
+            throw new ArgumentException("invalid query");
+
+        string classID = QueryParser.ClassNameToIdentifier(match.Groups[1].Value);
+        ConditionChain? conditionChain = ExtractConditionChainFromQuery(query, classID);
+        return QueryCreateHelpers[classID].DeleteCreator.Invoke(conditionChain);
     }
 
+    private static IQuery CreateAirportDeleteQuery(ConditionChain? conditionChain)
+    {
+        return new DeleteQuery<Airport>(conditionChain, EntityStorage.GetStorage().GetAllAirports().Values.ToList());
+    }
+
+    private static IQuery CreateCargoDeleteQuery(ConditionChain? conditionChain)
+    {
+        return new DeleteQuery<Cargo>(conditionChain, EntityStorage.GetStorage().GetAllCargos().Values.ToList());
+    }
+    
+    private static IQuery CreateCargoPlaneDeleteQuery(ConditionChain? conditionChain)
+    {
+        return new DeleteQuery<CargoPlane>(conditionChain, EntityStorage.GetStorage().GetAllCargoPlanes().Values.ToList());
+    }
+    
+    private static IQuery CreateCrewDeleteQuery(ConditionChain? conditionChain)
+    {
+        return new DeleteQuery<Crew>(conditionChain, EntityStorage.GetStorage().GetAllCrews().Values.ToList());
+    }
+    
+    private static IQuery CreateFlightDeleteQuery(ConditionChain? conditionChain)
+    {
+        return new DeleteQuery<Flight>(conditionChain, EntityStorage.GetStorage().GetAllFlights().Values.ToList());
+    }
+    
+    private static IQuery CreatePassengerDeleteQuery(ConditionChain? conditionChain)
+    {
+        return new DeleteQuery<Passenger>(conditionChain, EntityStorage.GetStorage().GetAllPassengers().Values.ToList());
+    }
+    
+    private static IQuery CreatePassengerPlaneDeleteQuery(ConditionChain? conditionChain)
+    {
+        return new DeleteQuery<PassengerPlane>(conditionChain, EntityStorage.GetStorage().GetAllPassengerPlanes().Values.ToList());
+    }
+    
     private static IQuery CreateDisplayQuery(string query)
     {
         string pattern = @"display .*? from (\w+)(?: where .*)?$";
@@ -70,9 +116,7 @@ internal class QueryFactory
 
         var fields = QueryParser.ParseFields(query.Substring(query.IndexOf(' '), query.IndexOf("from") - query.IndexOf(' ')));
 
-        ConditionChain? conditionChain = null;
-        if (query.Contains("where"))
-            conditionChain = QueryParser.ParseConditions(query.Substring(query.IndexOf("where") + "where ".Length), classID);
+        ConditionChain? conditionChain = ExtractConditionChainFromQuery(query, classID);
 
         return QueryCreateHelpers[classID].DisplayCreator.Invoke(conditionChain, fields);
     }
@@ -115,5 +159,13 @@ internal class QueryFactory
     private static IQuery CreateUpdateQuery(string query)
     {
         throw new NotImplementedException();
+    }
+
+    private static ConditionChain? ExtractConditionChainFromQuery(string query, string classID)
+    {
+        ConditionChain? conditionChain = null;
+        if (query.Contains("where"))
+            conditionChain = QueryParser.ParseConditions(query.Substring(query.IndexOf("where") + "where ".Length), classID);
+        return conditionChain;
     }
 }

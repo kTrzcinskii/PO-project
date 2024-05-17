@@ -70,7 +70,9 @@ internal class QueryFactory
 
         var fields = QueryParser.ParseFields(query.Substring(query.IndexOf(' '), query.IndexOf("from") - query.IndexOf(' ')));
 
-        var conditionChain = QueryParser.ParseConditions(query.Substring(query.IndexOf("where") + "where ".Length), classID);
+        ConditionChain? conditionChain = null;
+        if (query.Contains("where"))
+            conditionChain = QueryParser.ParseConditions(query.Substring(query.IndexOf("where") + "where ".Length), classID);
 
         return QueryCreateHelpers[classID].DisplayCreator.Invoke(conditionChain, fields);
     }

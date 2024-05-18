@@ -11,7 +11,7 @@ internal class Flight : IEntity
         public const string TargetID = "TargetID";
         public const string TakeOffTime = "TakeOffTime";
         public const string LandingTime = "LandingTime";
-        public const string Longitude = "WorldPostion.Long";
+        public const string Longitude = "WorldPosition.Long";
         public const string Latitude = "WorldPosition.Lat";
         public const string AMSL = "AMSL";
         public const string PlaneID = "PlaneID";

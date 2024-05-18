@@ -44,11 +44,11 @@ internal class Crew : Person
         return _fields[fieldName];
     }
     
-    public new static List<string> GetAllFieldsNames()
+    public static List<string> GetAllFieldsNames()
     {
         var all = new List<string>();
-        all.AddRange(FieldsNames.allFields);
         all.AddRange(Person.GetAllFieldsNames());
+        all.AddRange(FieldsNames.allFields);
         return all;
     }
 }

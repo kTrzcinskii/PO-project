@@ -47,8 +47,8 @@ internal class Passenger : Person, ILoad
     public new static List<string> GetAllFieldsNames()
     {
         var all = new List<string>();
-        all.AddRange(FieldsNames.allFields);
         all.AddRange(Person.GetAllFieldsNames());
+        all.AddRange(FieldsNames.allFields);
         return all;
     }
 }

@@ -97,4 +97,29 @@ internal static class QueryParser
             throw new ArgumentException("Invalid className");
         return EntitiesIdentifiers.FullNameToIdentifier[className];
     }
+
+    public static Dictionary<string, string> ParseFieldValues(string fieldValuesQueryPart)
+    {
+        var response = new Dictionary<string, string>();
+        fieldValuesQueryPart = fieldValuesQueryPart.Trim();
+        if (fieldValuesQueryPart.Length == 0 || !fieldValuesQueryPart.StartsWith('(') ||
+            !fieldValuesQueryPart.EndsWith(')'))
+            return response;
+        fieldValuesQueryPart = fieldValuesQueryPart.Remove(0,1);
+        fieldValuesQueryPart = fieldValuesQueryPart.Remove(fieldValuesQueryPart.Length - 1, 1);
+
+        var parts = fieldValuesQueryPart.Split(fieldSeparator);
+        foreach (var part in parts)
+        {
+            var fieldValue = part.Split('=');
+            if (fieldValue.Length != 2)
+                throw new ArgumentException("Invalid syntax");
+            (string field, string value) = (fieldValue[0], fieldValue[1]);
+            if (response.ContainsKey(field))
+                throw new ArgumentException("Cannot provide same field twice");
+            response.Add(field, value);
+        }
+        
+        return response;
+    }
 }

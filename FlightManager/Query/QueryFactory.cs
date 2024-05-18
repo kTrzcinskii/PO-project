@@ -51,7 +51,17 @@ internal class QueryFactory
 
     private static IQuery CreateAddQuery(string query)
     {
-        return new AddQuery();
+        string pattern = @"add (\w+) new \(.+\)$";
+        Regex regex = new Regex(pattern);
+        Match match = regex.Match(query);
+
+        if (!match.Success)
+            throw new ArgumentException("invalid query");
+
+        string classID = QueryParser.ClassNameToIdentifier(match.Groups[1].Value);
+        var propertyValueHolders = QueryParser.ParseFieldValues(query.Substring(query.IndexOf("new ") + "new ".Length));
+
+        return new AddQuery(propertyValueHolders, classID);
     }
 
     private static  IQuery CreateDeleteQuery(string query)

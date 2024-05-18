@@ -5,7 +5,7 @@ namespace FlightManager.Entity;
 
 internal class CargoPlane : Plane, IReportable
 {
-    private static class FieldsNames
+    public static class FieldsNames
     {
         public const string MaxLoad = "MaxLoad";
 

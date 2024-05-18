@@ -4,7 +4,7 @@ namespace FlightManager.Entity;
 
 internal class Cargo : IEntity, ILoad
 {
-    private static class FieldsNames
+    public static class FieldsNames
     {
         public const string ID = "ID";
         public const string Weight = "Weight";

@@ -5,7 +5,7 @@ namespace FlightManager.Entity;
 
 internal class PassengerPlane : Plane, IReportable
 {
-    private static class FieldsNames
+    public static class FieldsNames
     {
         public const string FirstClassSize = "FirstClassSize";
         public const string BusinessClassSize = "BusinessClassSize";

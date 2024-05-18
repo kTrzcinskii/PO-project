@@ -3,7 +3,7 @@
 namespace FlightManager.Entity;
 internal abstract class Plane : IEntity
 {
-    private static class FieldsNames
+    public static class FieldsNames
     {
         public const string ID = "ID";
         public const string Serial = "Serial";

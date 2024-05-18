@@ -4,7 +4,7 @@ namespace FlightManager.Entity;
 
 internal class Passenger : Person, ILoad
 {
-    private static class FieldsNames
+    public static class FieldsNames
     {
         public const string Class = "Class";
         public const string Miles = "Miles";

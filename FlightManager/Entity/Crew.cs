@@ -4,7 +4,7 @@ namespace FlightManager.Entity;
 
 internal class Crew : Person
 {
-    private static class FieldsNames
+    public static class FieldsNames
     {
         public const string Practice = "Practice";
         public const string Role = "Role";

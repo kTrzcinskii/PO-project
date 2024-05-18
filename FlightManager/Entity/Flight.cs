@@ -4,8 +4,7 @@ namespace FlightManager.Entity;
 
 internal class Flight : IEntity
 {
-    // For now don't include array types
-    private static class FieldsNames
+    public static class FieldsNames
     {
         public const string ID = "ID";
         public const string OriginID = "OriginID";

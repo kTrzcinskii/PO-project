@@ -3,20 +3,20 @@ using FlightManager.Entity;
 
 namespace FlightManager.Query;
 
-internal class DisplayQuery<T> : FilterableQuery<T> where T : IEntity
+internal class DisplayQuery : FilterableQuery
 {
     private List<string>? _fields;
     
-    public DisplayQuery(ConditionChain? conditions, List<T> entities, List<string>? fields) : base(conditions, entities)
+    public DisplayQuery(ConditionChain? conditions, List<string>? fields, string classIdentifier) : base(conditions, classIdentifier)
     {
         _fields = fields;
     }
     
-    private Dictionary<string, (List<object> rows, int requiredColumnWidth)> PrepareColumns(List<T> data)
+    private Dictionary<string, (List<object> rows, int requiredColumnWidth)> PrepareColumns(List<IEntity> data)
     {
         if (_fields == null)
         {
-            _fields = T.GetAllFieldsNames();
+            _fields = _allFields[_classIdentifier];
             SkipStructInsides();
         }
 
@@ -95,4 +95,15 @@ internal class DisplayQuery<T> : FilterableQuery<T> where T : IEntity
     {
         _fields?.RemoveAll(f => f.Contains('.'));
     }
+
+    private static Dictionary<string, List<string>> _allFields = new Dictionary<string, List<string>>()
+    {
+        { EntitiesIdentifiers.AirportID, Airport.GetAllFieldsNames() },
+        { EntitiesIdentifiers.CargoID, Cargo.GetAllFieldsNames() },
+        { EntitiesIdentifiers.CargoPlaneID, CargoPlane.GetAllFieldsNames() },
+        { EntitiesIdentifiers.CrewID, Crew.GetAllFieldsNames() },
+        { EntitiesIdentifiers.FlightID, Flight.GetAllFieldsNames() },
+        { EntitiesIdentifiers.PassengerID, Passenger.GetAllFieldsNames() },
+        { EntitiesIdentifiers.PassengerPlaneID, PassengerPlane.GetAllFieldsNames() },
+    };
 }

@@ -2,16 +2,16 @@
 
 namespace FlightManager.Query;
 
-internal class DeleteQuery<T> : FilterableQuery<T> where T : IEntity
+internal class DeleteQuery : FilterableQuery
 {
     private DeletingVisitor visitor;
     
-    public DeleteQuery(ConditionChain? conditions, List<T> entities) : base(conditions, entities)
+    public DeleteQuery(ConditionChain? conditions, string classIdentifier) : base(conditions, classIdentifier)
     {
         visitor = new DeletingVisitor();
     }
 
-    private void DeleteAll(List<T> entities)
+    private void DeleteAll(List<IEntity> entities)
     {
         foreach (var entity in entities)
         {

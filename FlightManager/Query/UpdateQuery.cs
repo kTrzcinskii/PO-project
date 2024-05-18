@@ -2,9 +2,9 @@
 
 namespace FlightManager.Query;
 
-internal class UpdateQuery<T> : FilterableQuery<T> where T : IEntity
+internal class UpdateQuery : FilterableQuery
 {
-    public UpdateQuery(ConditionChain? conditions, List<T> entities) : base(conditions, entities)
+    public UpdateQuery(ConditionChain? conditions, string classIdentifier) : base(conditions, classIdentifier)
     {
     }
     

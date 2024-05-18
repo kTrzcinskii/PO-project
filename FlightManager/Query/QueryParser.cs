@@ -23,7 +23,7 @@ internal static class QueryParser
         if (conditionsQueryPart.Length == 0)
             return null;
         
-        string pattern = @"\s*(and|or)\s*";
+        string pattern = @" (and|or) ";
         var conditionsAndSeparators = Regex.Split(conditionsQueryPart, pattern).ToList();
 
         ConditionChain? chain = null;

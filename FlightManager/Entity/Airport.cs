@@ -10,12 +10,13 @@ internal class Airport : IEntity, IReportable
         public const string ID = "ID";
         public const string Name = "Name";
         public const string Code = "Code";
-        public const string Longitude = "Longitude";
-        public const string Latitude = "Latitude";
+        public const string Longitude = "WorldPosition.Long";
+        public const string Latitude = "WorldPosition.Lat";
         public const string AMSL = "AMSL";
         public const string CountryISO = "CountryISO";
+        public const string WorldPosition = "WorldPosition";
 
-        public static List<string> allFields = new List<string>() { ID, Name, Code, Longitude, Latitude, AMSL, CountryISO };
+        public static List<string> allFields = new List<string>() { ID, Name, Code, Latitude, Longitude, AMSL, CountryISO, WorldPosition };
     }
     
     public ulong ID { get; set; }
@@ -26,6 +27,8 @@ internal class Airport : IEntity, IReportable
     public float AMSL { get; set; }
     public string CountryISO { get; init; }
 
+    public WorldPosition WorldPosition { get; set; }
+    
     private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
 
     public Airport(ulong iD, string name, string code, float longitude, float latitude, float aMSL, string countryISO)
@@ -44,6 +47,8 @@ internal class Airport : IEntity, IReportable
         _fields.Add(FieldsNames.AMSL, AMSL);
         CountryISO = countryISO;
         _fields.Add(FieldsNames.CountryISO, CountryISO);
+        WorldPosition = new WorldPosition(longitude, latitude);
+        _fields.Add(FieldsNames.WorldPosition, WorldPosition);
     }
 
     public void AcceptVisitor(IEntityVisitor visitor)

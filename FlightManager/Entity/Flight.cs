@@ -12,12 +12,13 @@ internal class Flight : IEntity
         public const string TargetID = "TargetID";
         public const string TakeOffTime = "TakeOffTime";
         public const string LandingTime = "LandingTime";
-        public const string Longitude = "Longitude";
-        public const string Latitude = "Latitude";
+        public const string Longitude = "WorldPostion.Long";
+        public const string Latitude = "WorldPosition.Lat";
         public const string AMSL = "AMSL";
         public const string PlaneID = "PlaneID";
+        public const string WordlPosition = "WorldPosition";
 
-        public static List<string> allFields = new List<string>() { ID, OriginID, TargetID, TakeOffTime, LandingTime, Longitude, Latitude, AMSL, PlaneID };
+        public static List<string> allFields = new List<string>() { ID, OriginID, TargetID, TakeOffTime, LandingTime, Longitude, Latitude, AMSL, PlaneID, WordlPosition };
     }
     
     public ulong ID { get; set; }
@@ -31,6 +32,8 @@ internal class Flight : IEntity
     public ulong PlaneID { get; set; }
     public ulong[] CrewIDs { get; init; }
     public ulong[] LoadIDs { get; init; }
+    
+    public WorldPosition WorldPosition { get; set; }
     
     private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
 
@@ -56,6 +59,8 @@ internal class Flight : IEntity
         _fields.Add(FieldsNames.PlaneID, PlaneID);
         CrewIDs = crewIDs;
         LoadIDs = loadIDs;
+        WorldPosition = new WorldPosition(longitude ?? -1.0f, latitude ?? -1.0f);
+        _fields.Add(FieldsNames.WordlPosition, WorldPosition);
     }
 
     public void AcceptVisitor(IEntityVisitor visitor)

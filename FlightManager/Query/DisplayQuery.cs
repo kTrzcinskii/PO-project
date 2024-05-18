@@ -17,6 +17,7 @@ internal class DisplayQuery<T> : FilterableQuery<T> where T : IEntity
         if (_fields == null)
         {
             _fields = T.GetAllFieldsNames();
+            SkipStructInsides();
         }
 
         var dict = new Dictionary<string, (List<object> rows, int requiredColumnWidth)>();
@@ -90,4 +91,8 @@ internal class DisplayQuery<T> : FilterableQuery<T> where T : IEntity
         PrintData(columns, data.Count);
     }
 
+    private void SkipStructInsides()
+    {
+        _fields?.RemoveAll(f => f.Contains('.'));
+    }
 }

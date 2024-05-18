@@ -151,9 +151,9 @@ internal class FlightManager
             IQuery query = QueryCreator.CreateQuery(queryCommand);
             query.Execute();
         }
-        catch (ArgumentException)
+        catch (ArgumentException ex)
         {
-            Console.WriteLine("Invalid syntax\n");
+            Console.WriteLine($"Invalid syntax: {ex.Message}\n");
         }
     }
 }

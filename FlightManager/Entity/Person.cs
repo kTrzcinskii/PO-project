@@ -1,4 +1,5 @@
 ﻿using FlightManager.Query;
+using FlightManager.Storage;
 
 namespace FlightManager.Entity;
 internal abstract class Person : IEntity
@@ -66,6 +67,8 @@ internal abstract class Person : IEntity
     }
 
     private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
+
+    protected EntityStorage _storage;
     
     public Person(ulong iD, string name, ulong age, string phone, string email)
     {
@@ -74,6 +77,8 @@ internal abstract class Person : IEntity
         Age = age;
         Phone = phone;
         Email = email;
+        _storage = EntityStorage.GetStorage();
+        SetupUpdateFuncs();
     }
 
     public abstract void AcceptVisitor(IEntityVisitor visitor);
@@ -98,6 +103,54 @@ internal abstract class Person : IEntity
 
     public virtual void UpdateFieldValue(string fieldName, IComparable value)
     {
-        throw new NotImplementedException();
+        if (!_updateFuncs.ContainsKey(fieldName))
+        {
+            throw new ArgumentException($"Invalid fieldName {fieldName}");
+        }
+        try
+        {
+            _updateFuncs[fieldName].Invoke(value);
+        }
+        catch (Exception)
+        {
+            throw new ArgumentException($"Couldnt assign {value} to {fieldName}");
+        }
+    }
+
+    public abstract void UpdateID(IComparable value);
+
+    public void UpdateName(IComparable value)
+    {
+        string newName = (string)value;
+        Name = newName;
+    }
+
+    public void UpdateAge(IComparable value)
+    {
+        ulong newAge = (ulong)value;
+        Age = newAge;
+    }
+
+    public void UpdatePhone(IComparable value)
+    {
+        string newPhone = (string)value;
+        Phone = newPhone;
+    }
+
+    public void UpdateEmail(IComparable value)
+    {
+        string newEmail = (string)value;
+        Email = newEmail;
+    }
+    
+    private Dictionary<string, Action<IComparable>> _updateFuncs = new Dictionary<string, Action<IComparable>>();
+
+    private void SetupUpdateFuncs()
+    {
+        _updateFuncs.Add(FieldsNames.ID, UpdateID);
+        _updateFuncs.Add(FieldsNames.Name, UpdateName);
+        _updateFuncs.Add(FieldsNames.Age, UpdateAge);
+        _updateFuncs.Add(FieldsNames.Phone, UpdatePhone);
+        _updateFuncs.Add(FieldsNames.Email, UpdateEmail);
     }
 }

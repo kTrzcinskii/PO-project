@@ -39,6 +39,7 @@ internal class Crew : Person
     {
         Practice = practice;
         Role = role;
+        SetupUpdateFuncs();
     }
 
     public override void AcceptVisitor(IEntityVisitor visitor)
@@ -62,9 +63,60 @@ internal class Crew : Person
 
     public override void UpdateFieldValue(string fieldName, IComparable value)
     {
-        base.UpdateFieldValue(fieldName, value);
+        if (!_updateFuncs.ContainsKey(fieldName))
+        {
+            base.UpdateFieldValue(fieldName, value);
+            return;
+        }
+        try
+        {
+            _updateFuncs[fieldName].Invoke(value);
+        }
+        catch (Exception)
+        {
+            throw new ArgumentException($"Couldnt assign {value} to {fieldName}");
+        }
     }
 
+    public override void UpdateID(IComparable value)
+    {
+        ulong newID = (ulong)value;
+        _storage.RemoveCrew(ID);
+        
+        var flights = _storage.GetAllFlights();
+        foreach (var (_, flight) in flights)
+        {
+            int index = Array.IndexOf(flight.CrewIDs, ID);
+            if (index == -1)
+                continue;
+            flight.CrewIDs[index] = newID;
+            break;
+        }
+        
+        ID = newID;
+        _storage.Add(this);
+    }
+
+    public void UpdatePractice(IComparable value)
+    {
+        ushort newPractice = (ushort)value;
+        Practice = newPractice;
+    }
+
+    public void UpdateRole(IComparable value)
+    {
+        string newRole = (string)value;
+        Role = newRole;
+    }
+    
+    private Dictionary<string, Action<IComparable>> _updateFuncs = new Dictionary<string, Action<IComparable>>();
+
+    private void SetupUpdateFuncs()
+    {
+        _updateFuncs.Add(FieldsNames.Practice, UpdatePractice);
+        _updateFuncs.Add(FieldsNames.Role, UpdateRole);
+    }
+    
     public static List<string> GetAllFieldsNames()
     {
         var all = new List<string>();

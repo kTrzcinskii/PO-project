@@ -28,6 +28,7 @@ internal class CargoPlane : Plane, IReportable
     public CargoPlane(ulong iD, string serial, string countryISO, string model, float maxLoad) : base(iD, serial, countryISO, model)
     {
         MaxLoad = maxLoad;
+        SetupUpdateFuncs();
     }
 
     public override void AcceptVisitor(IEntityVisitor visitor)
@@ -56,7 +57,50 @@ internal class CargoPlane : Plane, IReportable
 
     public override void UpdateFieldValue(string fieldName, IComparable value)
     {
-        base.UpdateFieldValue(fieldName, value);
+        if (!_updateFuncs.ContainsKey(fieldName))
+        {
+            base.UpdateFieldValue(fieldName, value);
+            return;
+        }
+        try
+        {
+            _updateFuncs[fieldName].Invoke(value);
+        }
+        catch (Exception)
+        {
+            throw new ArgumentException($"Couldnt assign {value} to {fieldName}");
+        }
+    }
+
+    public override void UpdateID(IComparable value)
+    {
+        ulong newID = (ulong)value;
+        _storage.RemoveCargoPlane(newID);
+        
+        var flights = _storage.GetAllFlights();
+        foreach (var (_, flight) in flights)
+        {
+            if (flight.PlaneID == ID)
+            {
+                flight.PlaneID = newID;
+            }
+        }
+        
+        ID = newID;
+        _storage.Add(this);
+    }
+
+    public void UpdateMaxLoad(IComparable value)
+    {
+        float newMaxLoad = (float)value;
+        MaxLoad = newMaxLoad;
+    }
+    
+    private Dictionary<string, Action<IComparable>> _updateFuncs = new Dictionary<string, Action<IComparable>>();
+
+    private void SetupUpdateFuncs()
+    {
+        _updateFuncs.Add(FieldsNames.MaxLoad, UpdateMaxLoad);
     }
 
     public new static List<string> GetAllFieldsNames()

@@ -1,4 +1,5 @@
 ﻿using FlightManager.Query;
+using FlightManager.Storage;
 
 namespace FlightManager.Entity;
 internal abstract class Plane : IEntity
@@ -56,12 +57,16 @@ internal abstract class Plane : IEntity
     
     private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
 
+    protected EntityStorage _storage;
+
     public Plane(ulong iD, string serial, string countryISO, string model)
     {
         ID = iD;
         Serial = serial;
         CountryISO = countryISO;
         Model = model;
+        _storage = EntityStorage.GetStorage();
+        SetupUpdateFuncs();
     }
 
     public abstract void AcceptVisitor(IEntityVisitor visitor);
@@ -86,6 +91,47 @@ internal abstract class Plane : IEntity
 
     public virtual void UpdateFieldValue(string fieldName, IComparable value)
     {
-        throw new NotImplementedException();
+        if (!_updateFuncs.ContainsKey(fieldName))
+        {
+            throw new ArgumentException($"Invalid fieldName {fieldName}");
+        }
+        try
+        {
+            _updateFuncs[fieldName].Invoke(value);
+        }
+        catch (Exception)
+        {
+            throw new ArgumentException($"Couldnt assign {value} to {fieldName}");
+        }
+    }
+
+    public abstract void UpdateID(IComparable value);
+
+    public void UpdateSerial(IComparable value)
+    {
+        string newSerial = (string)value;
+        Serial = newSerial;
+    }
+
+    public void UpdateCountryISO(IComparable value)
+    {
+        string newCountryISO = (string)value;
+        CountryISO = newCountryISO;
+    }
+
+    public void UpdateModel(IComparable value)
+    {
+        string newModel = (string)value;
+        Model = newModel;
+    }
+    
+    private Dictionary<string, Action<IComparable>> _updateFuncs = new Dictionary<string, Action<IComparable>>();
+
+    private void SetupUpdateFuncs()
+    {
+        _updateFuncs.Add(FieldsNames.ID, UpdateID);
+        _updateFuncs.Add(FieldsNames.Serial, UpdateSerial);
+        _updateFuncs.Add(FieldsNames.CountryISO, UpdateCountryISO);
+        _updateFuncs.Add(FieldsNames.Model, UpdateModel);
     }
 }

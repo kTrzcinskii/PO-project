@@ -39,6 +39,7 @@ internal class Passenger : Person, ILoad
     {
         Class = @class;
         Miles = miles;
+        SetupUpdateFuncs();
     }
 
     public override void AcceptVisitor(IEntityVisitor visitor)
@@ -62,7 +63,58 @@ internal class Passenger : Person, ILoad
 
     public override void UpdateFieldValue(string fieldName, IComparable value)
     {
-        base.UpdateFieldValue(fieldName, value);
+        if (!_updateFuncs.ContainsKey(fieldName))
+        {
+            base.UpdateFieldValue(fieldName, value);
+            return;
+        }
+        try
+        {
+            _updateFuncs[fieldName].Invoke(value);
+        }
+        catch (Exception)
+        {
+            throw new ArgumentException($"Couldnt assign {value} to {fieldName}");
+        }
+    }
+
+    public override void UpdateID(IComparable value)
+    {
+        ulong newID = (ulong)value;
+        _storage.RemovePassenger(ID);
+        
+        var flights = _storage.GetAllFlights();
+        foreach (var (_, flight) in flights)
+        {
+            int index = Array.IndexOf(flight.LoadIDs, ID);
+            if (index == -1)
+                continue;
+            flight.LoadIDs[index] = newID;
+            break;
+        }
+        
+        ID = newID;
+        _storage.Add(this);
+    }
+
+    public void UpdateClass(IComparable value)
+    {
+        string newClass = (string)value;
+        Class = newClass;
+    }
+
+    public void UpdateMiles(IComparable value)
+    {
+        ulong newMiles = (ulong)value;
+        Miles = newMiles;
+    }
+    
+    private Dictionary<string, Action<IComparable>> _updateFuncs = new Dictionary<string, Action<IComparable>>();
+
+    private void SetupUpdateFuncs()
+    {
+        _updateFuncs.Add(FieldsNames.Class, UpdateClass);
+        _updateFuncs.Add(FieldsNames.Miles, UpdateMiles);
     }
 
     public new static List<string> GetAllFieldsNames()

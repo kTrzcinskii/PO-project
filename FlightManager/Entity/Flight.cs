@@ -1,4 +1,5 @@
 ﻿using FlightManager.Query;
+using FlightManager.Storage;
 
 namespace FlightManager.Entity;
 
@@ -135,6 +136,8 @@ internal class Flight : IEntity
     
     private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
 
+    private EntityStorage _storage;
+
     public Flight(ulong iD, ulong originID, ulong targetID, DateTime takeOffTime, DateTime landingTime, float? longitude, float? latitude, float? aMSL, ulong planeID, ulong[] crewIDs, ulong[] loadIDs)
     {
         ID = iD;
@@ -149,6 +152,8 @@ internal class Flight : IEntity
         CrewIDs = crewIDs;
         LoadIDs = loadIDs;
         WorldPosition = new WorldPosition(longitude, latitude);
+        _storage = EntityStorage.GetStorage();
+        SetupUpdateFuncs();
     }
 
     public void AcceptVisitor(IEntityVisitor visitor)
@@ -177,6 +182,92 @@ internal class Flight : IEntity
 
     public void UpdateFieldValue(string fieldName, IComparable value)
     {
-        throw new NotImplementedException();
+        if (!_updateFuncs.ContainsKey(fieldName))
+            throw new ArgumentException($"Invalid fieldName {fieldName}");
+        try
+        {
+            _updateFuncs[fieldName].Invoke(value);
+        }
+        catch (Exception)
+        {
+            throw new ArgumentException($"Couldnt assign {value} to {fieldName}");
+        }
+    }
+
+    public void UpdateID(IComparable value)
+    {
+        ulong newID = (ulong)value;
+        _storage.RemoveFlight(ID);
+        ID = newID;
+        _storage.Add(this);
+    }
+
+    public void UpdateOriginID(IComparable value)
+    {
+        ulong newOriginID = (ulong)value;
+        if (_storage.GetAirport(newOriginID) == null)
+            throw new ArgumentException($"There isn't any Airport with {newOriginID} in db");
+        OriginID = newOriginID;
+    }
+    
+    public void UpdateTargetID(IComparable value)
+    {
+        ulong newTargetID = (ulong)value;
+        if (_storage.GetAirport(newTargetID) == null)
+            throw new ArgumentException($"There isn't any Airport with {newTargetID} in db");
+        TargetID = newTargetID;
+    }
+
+    public void UpdateTakeOffTime(IComparable value)
+    {
+        DateTime newTakeOffTime = (DateTime)value;
+        TakeOffTime = newTakeOffTime;
+    }
+    
+    public void UpdateLandingTime(IComparable value)
+    {
+        DateTime newLandingTime = (DateTime)value;
+        LandingTime = newLandingTime;
+    }
+
+    public void UpdateLongitude(IComparable value)
+    {
+        float? newLongitude = (float?)value;
+        Longitude = newLongitude;
+    }
+
+    public void UpdateLatitude(IComparable value)
+    {
+        float? newLatitude = (float?)value;
+        Latitude = newLatitude;
+    }
+
+    public void UpdateAMSL(IComparable value)
+    {
+        float? newAMSL = (float?)value;
+        AMSL = newAMSL;
+    }
+
+    public void UpdatePlaneID(IComparable value)
+    {
+        ulong newPlaneID = (ulong)value;
+        if (_storage.GetCargoPlane(newPlaneID) == null && _storage.GetPassengerPlane(newPlaneID) == null)
+            throw new ArgumentException($"There isn't any Plane with {newPlaneID} in db");
+        PlaneID = newPlaneID;
+    }
+    
+    private Dictionary<string, Action<IComparable>> _updateFuncs = new Dictionary<string, Action<IComparable>>();
+
+    private void SetupUpdateFuncs()
+    {
+        _updateFuncs.Add(FieldsNames.ID, UpdateID);
+        _updateFuncs.Add(FieldsNames.OriginID, UpdateOriginID);
+        _updateFuncs.Add(FieldsNames.TargetID, UpdateTargetID);
+        _updateFuncs.Add(FieldsNames.TakeOffTime, UpdateTakeOffTime);
+        _updateFuncs.Add(FieldsNames.LandingTime, UpdateLandingTime);
+        _updateFuncs.Add(FieldsNames.Longitude, UpdateLongitude);
+        _updateFuncs.Add(FieldsNames.Latitude, UpdateLatitude);
+        _updateFuncs.Add(FieldsNames.AMSL, UpdateAMSL);
+        _updateFuncs.Add(FieldsNames.PlaneID, UpdatePlaneID);
     }
 }

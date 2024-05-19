@@ -14,26 +14,66 @@ internal abstract class Person : IEntity
         public static List<string> allFields = new List<string>() { ID, Name, Age, Phone, Email};
     }
     
-    public ulong ID { get; set; }
-    public string Name { get; init; }
-    public ulong Age { get; init; }
-    public string Phone { get; set; }
-    public string Email { get; set; }
+    protected ulong _ID { get; set; }
+    public ulong ID
+    {
+        get => _ID;
+        set
+        {
+            _ID = value;
+            _fields[FieldsNames.ID] = value;
+        }
+    }
+    protected string _name { get; set; }
+    public string Name
+    {
+        get => _name;
+        set
+        {
+            _name = value;
+            _fields[FieldsNames.Name] = value;
+        }
+    }
+    private ulong _age { get; set; }
+    public ulong Age
+    {
+        get => _age;
+        set
+        {
+            _age = value;
+            _fields[FieldsNames.Age] = value;
+        }
+    }
+    private string _phone { get; set; }
+    public string Phone
+    {
+        get => _phone;
+        set
+        {
+            _phone = value;
+            _fields[FieldsNames.Phone] = value;
+        }
+    }
+    private string _email { get; set; }
+    public string Email
+    {
+        get => _email;
+        set
+        {
+            _email = value;
+            _fields[FieldsNames.Email] = value;
+        }
+    }
 
     private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
     
     public Person(ulong iD, string name, ulong age, string phone, string email)
     {
         ID = iD;
-        _fields.Add(FieldsNames.ID, ID);
         Name = name;
-        _fields.Add(FieldsNames.Name, Name);
         Age = age;
-        _fields.Add(FieldsNames.Age, Age);
         Phone = phone;
-        _fields.Add(FieldsNames.Phone, Phone);
         Email = email;
-        _fields.Add(FieldsNames.Email, Email);
     }
 
     public abstract void AcceptVisitor(IEntityVisitor visitor);

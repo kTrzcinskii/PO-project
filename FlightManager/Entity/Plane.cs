@@ -13,23 +13,55 @@ internal abstract class Plane : IEntity
         public static List<string> allFields = new List<string>() { ID, Serial, CountryISO, Model };
     }
     
-    public ulong ID { get; set; }
-    public string Serial { get; init; }
-    public string CountryISO { get; init; }
-    public string Model { get; init; }
+    protected ulong _ID { get; set; }
+    public ulong ID
+    {
+        get => _ID;
+        set
+        {
+            _ID = value;
+            _fields[FieldsNames.ID] = value;
+        }
+    }
+    protected string _serial { get; set; }
+    public string Serial
+    {
+        get => _serial;
+        set
+        {
+            _serial = value;
+            _fields[FieldsNames.Serial] = value;
+        }
+    }
+    protected string _countryISO { get; set; }
+    public string CountryISO 
+    {
+        get => _countryISO;
+        set
+        {
+            _countryISO = value;
+            _fields[FieldsNames.CountryISO] = value;
+        }
+    }
+    protected string _model { get; set; }
+    public string Model
+    {
+        get => _model;
+        set
+        {
+            _model = value;
+            _fields[FieldsNames.Model] = value;
+        }
+    }
     
     private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
 
     public Plane(ulong iD, string serial, string countryISO, string model)
     {
         ID = iD;
-        _fields.Add(FieldsNames.ID, ID);
         Serial = serial;
-        _fields.Add(FieldsNames.Serial, Serial);
         CountryISO = countryISO;
-        _fields.Add(FieldsNames.CountryISO, CountryISO);
         Model = model;
-        _fields.Add(FieldsNames.Model, Model);
     }
 
     public abstract void AcceptVisitor(IEntityVisitor visitor);

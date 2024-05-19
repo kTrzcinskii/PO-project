@@ -12,17 +12,33 @@ internal class Passenger : Person, ILoad
         public static List<string> allFields = new List<string>() { Class, Miles };
     }
     
-    public string Class { get; init; }
-    public ulong Miles { get; init; }
+    private string _class { get; set; }
+    public string Class
+    {
+        get => _class;
+        set
+        {
+            _class = value;
+            _fields[FieldsNames.Class] = value;
+        }
+    }
+    private ulong _miles { get; set; }
+    public ulong Miles
+    {
+        get => _miles;
+        set
+        {
+            _miles = value;
+            _fields[FieldsNames.Miles] = value;
+        }
+    }
 
     private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
     
     public Passenger(ulong iD, string name, ulong age, string phone, string email, string @class, ulong miles) : base(iD, name, age, phone, email)
     {
         Class = @class;
-        _fields.Add(FieldsNames.Class, Class);
         Miles = miles;
-        _fields.Add(FieldsNames.Miles, Miles);
     }
 
     public override void AcceptVisitor(IEntityVisitor visitor)

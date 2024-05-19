@@ -14,23 +14,55 @@ internal class Cargo : IEntity, ILoad
         public static List<string> allFields = new List<string>() { ID, Weight, Code, Description};
     }
     
-    public ulong ID { get; set; }
-    public float Weight { get; init; }
-    public string Code { get; init; }
-    public string Description { get; init; }
+    private ulong _ID { get; set; }
+    public ulong ID
+    {
+        get => _ID;
+        set
+        {
+            _ID = value;
+            _fields[FieldsNames.ID] = value;
+        }
+    }
+    private float _weight { get; set; }
+    public float Weight
+    {
+        get => _weight;
+        set
+        {
+            _weight = value;
+            _fields[FieldsNames.Weight] = value;
+        }
+    }
+    private string _code { get; set; }
+    public string Code
+    {
+        get => _code;
+        set
+        {
+            _code = value;
+            _fields[FieldsNames.Code] = value;
+        }
+    }
+    private string _description { get; set; }
+    public string Description
+    {
+        get => _description;
+        set
+        {
+            _description = value;
+            _fields[FieldsNames.Description] = value;
+        }
+    }
 
     private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
 
     public Cargo(ulong iD, float weight, string code, string description)
     {
         ID = iD;
-        _fields.Add(FieldsNames.ID, ID);
         Weight = weight;
-        _fields.Add(FieldsNames.Weight, Weight);
         Code = code;
-        _fields.Add(FieldsNames.Code, Code);
         Description = description;
-        _fields.Add(FieldsNames.Description, Description);
     }
 
     public void AcceptVisitor(IEntityVisitor visitor)

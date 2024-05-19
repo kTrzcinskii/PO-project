@@ -12,17 +12,33 @@ internal class Crew : Person
         public static List<string> allFields = new List<string>() { Practice, Role };
     }
     
-    public ushort Practice { get; init; }
-    public string Role { get; init; }
+    private ushort _practice { get; set; }
+    public ushort Practice
+    {
+        get => _practice;
+        set
+        {
+            _practice = value;
+            _fields[FieldsNames.Practice] = value;
+        }
+    }
+    private string _role { get; set; }
+    public string Role
+    {
+        get => _role;
+        set
+        {
+            _role = value;
+            _fields[FieldsNames.Role] = value;
+        }
+    }
     
     private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
 
     public Crew(ulong iD, string name, ulong age, string phone, string email, ushort practice, string role) : base(iD, name, age, phone, email)
     {
         Practice = practice;
-        _fields.Add(FieldsNames.Practice, Practice);
         Role = role;
-        _fields.Add(FieldsNames.Role, Role);
     }
 
     public override void AcceptVisitor(IEntityVisitor visitor)

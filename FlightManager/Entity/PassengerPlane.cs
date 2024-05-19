@@ -14,20 +14,44 @@ internal class PassengerPlane : Plane, IReportable
         public static List<string> allFields = new List<string>() { FirstClassSize, BusinessClassSize, EconomyClassSize };
     }
     
-    public ushort FirstClassSize { get; init; }
-    public ushort BusinessClassSize { get; init; }
-    public ushort EconomyClassSize { get; init; }
+    private ushort _firstClassSize { get; set; }
+    public ushort FirstClassSize
+    {
+        get => _firstClassSize;
+        set
+        {
+            _firstClassSize = value;
+            _fields[FieldsNames.FirstClassSize] = value;
+        }
+    }
+    private ushort _businessClassSize { get; set; }
+    public ushort BusinessClassSize
+    {
+        get => _businessClassSize;
+        set
+        {
+            _businessClassSize = value;
+            _fields[FieldsNames.BusinessClassSize] = value;
+        }
+    }
+    private ushort _economyClassSize { get; set; }
+    public ushort EconomyClassSize
+    {
+        get => _economyClassSize;
+        set
+        {
+            _economyClassSize = value;
+            _fields[FieldsNames.EconomyClassSize] = value;
+        }
+    }
     
     private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
 
     public PassengerPlane(ulong iD, string serial, string countryISO, string model, ushort firstClassSize, ushort businessClassSize, ushort economyClassSize) : base(iD, serial, countryISO, model)
     {
         FirstClassSize = firstClassSize;
-        _fields.Add(FieldsNames.FirstClassSize, FirstClassSize);
         BusinessClassSize = businessClassSize;
-        _fields.Add(FieldsNames.BusinessClassSize, BusinessClassSize);
         EconomyClassSize = economyClassSize;
-        _fields.Add(FieldsNames.EconomyClassSize, EconomyClassSize);
     }
 
     public override void AcceptVisitor(IEntityVisitor visitor)

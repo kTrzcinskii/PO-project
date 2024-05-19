@@ -19,36 +19,109 @@ internal class Airport : IEntity, IReportable
         public static List<string> allFields = new List<string>() { ID, Name, Code, Latitude, Longitude, AMSL, CountryISO, WorldPosition };
     }
     
-    public ulong ID { get; set; }
-    public string Name { get; init; }
-    public string Code { get; init; }
-    public float Longitude { get; set; }
-    public float Latitude { get; set; }
-    public float AMSL { get; set; }
-    public string CountryISO { get; init; }
+    private ulong _ID { get; set; }
+    public ulong ID
+    {
+        get => _ID;
+        set
+        {
+            _ID = value;
+            _fields[FieldsNames.ID] = value;
+        }
+    }
+    private string _name { get; set; }
+    public string Name
+    {
+        get => _name;
+        set
+        {
+            _name = value;
+            _fields[FieldsNames.Name] = value;
+        }
+    }
+    private string _code { get; set; }
+    public string Code 
+    {
+        get => _code;
+        set
+        {
+            _code = value;
+            _fields[FieldsNames.Code] = value;
+        }
+    }
+    private float _longitude { get; set; }
+    public float Longitude 
+    {
+        get => _longitude;
+        set
+        {
+            _longitude = value;
+            _worldPosition = new WorldPosition(value,_longitude);
+            _fields[FieldsNames.Longitude] = value;
+            _fields[FieldsNames.WorldPosition] = _worldPosition;
+        }
+    }
+    private float _latitude { get; set; }
+    public float Latitude
+    {
+        get => _latitude;
+        set
+        {
+            _latitude = value;
+            _worldPosition = new WorldPosition(_worldPosition.Long,value);
+            _fields[FieldsNames.Latitude] = value;
+            _fields[FieldsNames.WorldPosition] = _worldPosition;
+        }
+    }
+    private float _amsl { get; set; }
+    public float AMSL
+    {
+        get => _amsl;
+        set
+        {
+            _amsl = value;
+            _fields[FieldsNames.AMSL] = value;
+        }
+    }
+    private string _countryISO { get; set; }
+    public string CountryISO 
+    {
+        get => _countryISO;
+        set
+        {
+            _countryISO = value;
+            _fields[FieldsNames.CountryISO] = value;
+        }
+    }
+    
+    private WorldPosition _worldPosition { get; set; }
 
-    public WorldPosition WorldPosition { get; set; }
+    public WorldPosition WorldPosition 
+    {
+        get => _worldPosition;
+        set
+        {
+            _worldPosition = value;
+            _longitude = value.Long!.Value;
+            _latitude = value.Lat!.Value;
+            _fields[FieldsNames.WorldPosition] = value;
+            _fields[FieldsNames.Longitude] = _longitude;
+            _fields[FieldsNames.Latitude] = _latitude;
+        }
+    }
     
     private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
 
     public Airport(ulong iD, string name, string code, float longitude, float latitude, float aMSL, string countryISO)
     {
         ID = iD;
-        _fields.Add(FieldsNames.ID, ID);
         Name = name;
-        _fields.Add(FieldsNames.Name, Name);
         Code = code;
-        _fields.Add(FieldsNames.Code, Code);
         Longitude = longitude;
-        _fields.Add(FieldsNames.Longitude, Longitude);
         Latitude = latitude;
-        _fields.Add(FieldsNames.Latitude, Latitude);
         AMSL = aMSL;
-        _fields.Add(FieldsNames.AMSL, AMSL);
         CountryISO = countryISO;
-        _fields.Add(FieldsNames.CountryISO, CountryISO);
         WorldPosition = new WorldPosition(longitude, latitude);
-        _fields.Add(FieldsNames.WorldPosition, WorldPosition);
     }
 
     public void AcceptVisitor(IEntityVisitor visitor)

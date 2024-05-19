@@ -15,51 +15,140 @@ internal class Flight : IEntity
         public const string Latitude = "WorldPosition.Lat";
         public const string AMSL = "AMSL";
         public const string PlaneID = "PlaneID";
-        public const string WordlPosition = "WorldPosition";
+        public const string WorldPosition = "WorldPosition";
 
-        public static List<string> allFields = new List<string>() { ID, OriginID, TargetID, TakeOffTime, LandingTime, Longitude, Latitude, AMSL, PlaneID, WordlPosition };
+        public static List<string> allFields = new List<string>() { ID, OriginID, TargetID, TakeOffTime, LandingTime, Longitude, Latitude, AMSL, PlaneID, WorldPosition };
     }
     
-    public ulong ID { get; set; }
-    public ulong OriginID { get; set; }
-    public ulong TargetID { get; set; }
-    public DateTime TakeOffTime { get; init; }
-    public DateTime LandingTime { get; init; }
-    public float? Longitude { get; set; }
-    public float? Latitude { get; set; }
-    public float? AMSL { get; set; }
-    public ulong PlaneID { get; set; }
+    private ulong _ID { get; set; }
+    public ulong ID 
+    {
+        get => _ID;
+        set
+        {
+            _ID = value;
+            _fields[FieldsNames.ID] = value;
+        }
+    }
+    private ulong _originID { get; set; }
+    public ulong OriginID 
+    {
+        get => _originID;
+        set
+        {
+            _originID = value;
+            _fields[FieldsNames.OriginID] = value;
+        }
+    }
+    private ulong _targetID { get; set; }
+    public ulong TargetID 
+    {
+        get => _targetID;
+        set
+        {
+            _targetID = value;
+            _fields[FieldsNames.TargetID] = value;
+        }
+    }
+    private DateTime _takeOffTime { get; set; }
+    public DateTime TakeOffTime
+    {
+        get => _takeOffTime;
+        set
+        {
+            _takeOffTime = value;
+            _fields[FieldsNames.TakeOffTime] = value;
+        }
+    }
+    private DateTime _landingTime { get; set; }
+    public DateTime LandingTime
+    {
+        get => _landingTime;
+        set
+        {
+            _landingTime = value;
+            _fields[FieldsNames.LandingTime] = value;
+        }
+    }
+    private float? _longitude { get; set; }
+    public float? Longitude 
+    {
+        get => _longitude;
+        set
+        {
+            _longitude = value;
+            _worldPosition = new WorldPosition(value,_worldPosition.Lat);
+            _fields[FieldsNames.Longitude] = value;
+            _fields[FieldsNames.WorldPosition] = _worldPosition;
+        }
+    }
+    private float? _latitude { get; set; }
+    public float? Latitude
+    {
+        get => _latitude;
+        set
+        {
+            _latitude = value;
+            _worldPosition = new WorldPosition(_worldPosition.Long,value);
+            _fields[FieldsNames.Latitude] = value;
+            _fields[FieldsNames.WorldPosition] = _worldPosition;
+        }
+    }
+    private float? _amsl { get; set; }
+    public float? AMSL
+    {
+        get => _amsl;
+        set
+        {
+            _amsl = value;
+            _fields[FieldsNames.AMSL] = value;
+        }
+    }
+    private ulong _planeID { get; set; }
+    public ulong PlaneID
+    {
+        get => _planeID;
+        set
+        {
+            _amsl = value;
+            _fields[FieldsNames.PlaneID] = value;
+        }
+    }
     public ulong[] CrewIDs { get; init; }
     public ulong[] LoadIDs { get; init; }
     
-    public WorldPosition WorldPosition { get; set; }
+    private WorldPosition _worldPosition { get; set; }
+
+    public WorldPosition WorldPosition 
+    {
+        get => _worldPosition;
+        set
+        {
+            _worldPosition = value;
+            _longitude = value.Long;
+            _latitude = value.Lat;
+            _fields[FieldsNames.WorldPosition] = value;
+            _fields[FieldsNames.Longitude] = _longitude;
+            _fields[FieldsNames.Latitude] = _latitude;
+        }
+    }
     
     private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
 
     public Flight(ulong iD, ulong originID, ulong targetID, DateTime takeOffTime, DateTime landingTime, float? longitude, float? latitude, float? aMSL, ulong planeID, ulong[] crewIDs, ulong[] loadIDs)
     {
         ID = iD;
-        _fields.Add(FieldsNames.ID, ID);
         OriginID = originID;
-        _fields.Add(FieldsNames.OriginID, OriginID);
         TargetID = targetID;
-        _fields.Add(FieldsNames.TargetID, TargetID);
         TakeOffTime = takeOffTime;
-        _fields.Add(FieldsNames.TakeOffTime, TakeOffTime);
         LandingTime = landingTime;
-        _fields.Add(FieldsNames.LandingTime, LandingTime);
         Longitude = longitude;
-        _fields.Add(FieldsNames.Longitude, Longitude ?? -1.0f);
         Latitude = latitude;
-        _fields.Add(FieldsNames.Latitude, Latitude ?? -1.0f);
         AMSL = aMSL;
-        _fields.Add(FieldsNames.AMSL, AMSL ?? -1.0f);
         PlaneID = planeID;
-        _fields.Add(FieldsNames.PlaneID, PlaneID);
         CrewIDs = crewIDs;
         LoadIDs = loadIDs;
-        WorldPosition = new WorldPosition(longitude ?? -1.0f, latitude ?? -1.0f);
-        _fields.Add(FieldsNames.WordlPosition, WorldPosition);
+        WorldPosition = new WorldPosition(longitude, latitude);
     }
 
     public void AcceptVisitor(IEntityVisitor visitor)

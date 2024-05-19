@@ -83,4 +83,9 @@ internal abstract class Plane : IEntity
             throw new ArgumentException("Invalid fieldName");
         return _fields[fieldName];
     }
+
+    public virtual void UpdateFieldValue(string fieldName, IComparable value)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -174,4 +174,9 @@ internal class Flight : IEntity
             throw new ArgumentException("Invalid fieldName");
         return _fields[fieldName];
     }
+
+    public void UpdateFieldValue(string fieldName, IComparable value)
+    {
+        throw new NotImplementedException();
+    }
 }

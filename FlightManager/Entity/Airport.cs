@@ -1,5 +1,6 @@
 ﻿using FlightManager.NewsSource;
 using FlightManager.Query;
+using FlightManager.Storage;
 
 namespace FlightManager.Entity;
 
@@ -112,6 +113,8 @@ internal class Airport : IEntity, IReportable
     
     private Dictionary<string, IComparable> _fields = new Dictionary<string, IComparable>();
 
+    private EntityStorage _storage;
+    
     public Airport(ulong iD, string name, string code, float longitude, float latitude, float aMSL, string countryISO)
     {
         ID = iD;
@@ -122,6 +125,8 @@ internal class Airport : IEntity, IReportable
         AMSL = aMSL;
         CountryISO = countryISO;
         WorldPosition = new WorldPosition(longitude, latitude);
+        _storage = EntityStorage.GetStorage();
+        SetupUpdateFuncs();
     }
 
     public void AcceptVisitor(IEntityVisitor visitor)
@@ -148,6 +153,89 @@ internal class Airport : IEntity, IReportable
         return _fields[fieldName];
     }
 
+    public void UpdateFieldValue(string fieldName, IComparable value)
+    {
+        if (!_updateFuncs.ContainsKey(fieldName))
+            throw new ArgumentException($"Invalid fieldName {fieldName}");
+        try
+        {
+            _updateFuncs[fieldName].Invoke(value);
+        }
+        catch (Exception)
+        {
+            throw new ArgumentException($"Couldnt assign {value} to {fieldName}");
+        }
+    }
+
+    public void UpdateID(IComparable value)
+    {
+        ulong newID = (ulong)value;
+        _storage.RemoveAirport(ID);
+        var flights = _storage.GetAllFlights();
+        foreach (var (_, flight) in flights)
+        {
+            if (flight.OriginID == ID)
+            {
+                flight.OriginID = newID;
+            }
+            if (flight.TargetID == ID)
+            {
+                flight.TargetID = newID;
+            }
+        }
+        ID = newID;
+        _storage.Add(this);
+    }
+
+    public void UpdateName(IComparable value)
+    {
+        string newName = (string)value;
+        Name = newName;
+    }
+
+    public void UpdateCode(IComparable value)
+    {
+        string newCode = (string)value;
+        Code = newCode;
+    }
+
+    public void UpdateLongitude(IComparable value)
+    {
+        float newLong = (float)value;
+        Longitude = newLong;
+    }
+
+    public void UpdateLatitude(IComparable value)
+    {
+        float newLatitude = (float)value;
+        Latitude = newLatitude;
+    }
+
+    public void UpdateAMSL(IComparable value)
+    {
+        float newAMSL = (float)value;
+        AMSL = newAMSL;
+    }
+
+    public void UpdateCountryISO(IComparable value)
+    {
+        string newCountryISO = (string)value;
+        CountryISO = newCountryISO;
+    }
+
+    private Dictionary<string, Action<IComparable>> _updateFuncs = new Dictionary<string, Action<IComparable>>();
+
+    private void SetupUpdateFuncs()
+    {
+        _updateFuncs.Add(FieldsNames.ID, UpdateID);
+        _updateFuncs.Add(FieldsNames.Name, UpdateName);
+        _updateFuncs.Add(FieldsNames.Code, UpdateCode);
+        _updateFuncs.Add(FieldsNames.Longitude, UpdateLongitude);
+        _updateFuncs.Add(FieldsNames.Latitude, UpdateLatitude);
+        _updateFuncs.Add(FieldsNames.AMSL, UpdateAMSL);
+        _updateFuncs.Add(FieldsNames.CountryISO, UpdateCountryISO);
+    }
+    
     public string AcceptNewsSource(INewsSource newsSource)
     {
         return newsSource.GetReport(this);

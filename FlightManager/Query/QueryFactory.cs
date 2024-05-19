@@ -73,7 +73,20 @@ internal class QueryFactory
 
     private static IQuery CreateUpdateQuery(string query)
     {
-        throw new NotImplementedException();
+        string pattern = @"update (\w+) set \(.+\)(?: where .*)?$";
+        Regex regex = new Regex(pattern);
+        Match match = regex.Match(query);
+
+        if (!match.Success)
+            throw new ArgumentException("invalid query");
+
+        string classID = QueryParser.ClassNameToIdentifier(match.Groups[1].Value);
+        int fieldValuesStart = query.IndexOf("set ") + "set ".Length;
+        int fieldValuesLength = query.IndexOf(')') - fieldValuesStart + 1;
+        var propertyValueHolders = QueryParser.ParseFieldValues(query.Substring(fieldValuesStart, fieldValuesLength));
+        ConditionChain? conditionChain = ExtractConditionChainFromQuery(query, classID);
+
+        return new UpdateQuery(conditionChain, classID, propertyValueHolders);
     }
 
     private static ConditionChain? ExtractConditionChainFromQuery(string query, string classID)

@@ -77,7 +77,12 @@ internal class PassengerPlane : Plane, IReportable
             return base.GetFieldValue(fieldName);
         return _fields[fieldName];
     }
-    
+
+    public override void UpdateFieldValue(string fieldName, IComparable value)
+    {
+        base.UpdateFieldValue(fieldName, value);
+    }
+
     public new static List<string> GetAllFieldsNames()
     {
         var all = new List<string>();

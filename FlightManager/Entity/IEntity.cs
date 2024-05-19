@@ -3,8 +3,6 @@ using FlightManager.Query;
 
 namespace FlightManager.Entity;
 
-// TODO: should probably update setters in every class so that when value changes it also updates in dictionary used for 
-// implementing GetFieldValue
 [JsonDerivedType(typeof(Airport), typeDiscriminator: EntitiesIdentifiers.AirportID)]
 [JsonDerivedType(typeof(Cargo), typeDiscriminator: EntitiesIdentifiers.CargoID)]
 [JsonDerivedType(typeof(CargoPlane), typeDiscriminator: EntitiesIdentifiers.CargoPlaneID)]
@@ -20,4 +18,6 @@ internal interface IEntity
     public bool MatchCondition(QueryCondition condition);
 
     public IComparable GetFieldValue(string fieldName);
+
+    public void UpdateFieldValue(string fieldName, IComparable value);
 }

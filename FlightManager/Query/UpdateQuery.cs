@@ -1,4 +1,5 @@
 ﻿using FlightManager.Entity;
+using FlightManager.Storage;
 
 namespace FlightManager.Query;
 
@@ -16,6 +17,12 @@ internal class UpdateQuery : FilterableQuery
         {
             foreach ((string field, string value) in _fieldValues)
             {
+                if (field == "ID")
+                {
+                    if (EntityStorage.GetStorage()
+                            .GetByID((ulong)QueryEntityValueTypeParser.Parse(_classIdentifier, field, value)) != null)
+                        throw new ArgumentException($"{value} already used in db (ID must be unique)");
+                }
                 entity.UpdateFieldValue(field, QueryEntityValueTypeParser.Parse(_classIdentifier, field, value));
             }
         }

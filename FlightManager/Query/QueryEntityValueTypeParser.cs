@@ -1,4 +1,5 @@
-﻿using FlightManager.Entity;
+﻿using System.Globalization;
+using FlightManager.Entity;
 using ArgumentException = System.ArgumentException;
 
 namespace FlightManager.Query;
@@ -189,7 +190,7 @@ internal static class QueryEntityValueTypeParser
     {
         try
         {
-            return float.Parse(value);
+            return float.Parse(value, CultureInfo.InvariantCulture);
         }
         catch (Exception e)
         {
@@ -201,7 +202,7 @@ internal static class QueryEntityValueTypeParser
     {
         try
         {
-            return double.Parse(value);
+            return double.Parse(value, CultureInfo.InvariantCulture);
         }
         catch (Exception e)
         {

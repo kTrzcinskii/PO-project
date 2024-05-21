@@ -18,6 +18,7 @@ internal class QueryFactory
     
     public IQuery CreateQuery(string query)
     {
+        query = query.Trim();
         string queryType = query.Split(" ")[0];
         if (!QueryCreateFunctions.TryGetValue(queryType, out CreateQueryDelegate? factoryMethod))
             throw new ArgumentException("Ivalid query type");
